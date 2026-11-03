@@ -1,14 +1,3 @@
-<h1 align="center">Kairo Cat</h1>
-
-<p align="center">
-  <img src="https://raw.githubusercontent.com/KarolMrozinski/kairo-cat/main/docs/Kairo_animated.gif" alt="Kairo desktop companion" width="520" />
-</p>
-
-<p align="center">
-  <a href="#features"><img alt="Desktop companion" src="https://img.shields.io/badge/Type-Desktop%20Companion-8b5cf6" /></a>
-  <a href="#requirements"><img alt="Java" src="https://img.shields.io/badge/Java-8%2B-007396" /></a>
-  <a href="#license"><img alt="License" src="https://img.shields.io/badge/License-Limited-orange" /></a>
-</p>
 
 <h1 align="center">Kairo Cat</h1>
 
