@@ -7,7 +7,7 @@
  */
 
 
-public class KairoSettings {
+public final class KairoSettings {
 
 	// Settings keys:
 	private static final String HELLO = "hello";
@@ -146,9 +146,9 @@ public class KairoSettings {
 	public void setMotionIntensity(int value) { motionIntensity = clampPercent(value); settings.setInt(MOTION_INTENSITY, motionIntensity); }
 	public void setDesktopMargin(int value) { desktopMargin = Math.max(0, value); settings.setInt(DESKTOP_MARGIN, desktopMargin); }
 	public void setEditorPadding(int value) { editorPadding = Math.max(0, value); settings.setInt(EDITOR_PADDING, editorPadding); }
-	public void save() { settings.save(); }
+	public final void save() { settings.save(); }
 
-	public void load()
+	public final void load()
 	{
 		settings.load();
 		String hello=settings.getString(HELLO);

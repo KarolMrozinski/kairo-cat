@@ -60,7 +60,7 @@ import javax.swing.WindowConstants;
  * cat sleeps.
  * <br>1.0 2010-07-16 Created.
  */
-public class Kairo {
+public final class Kairo {
 
 	//
 	//Constants
@@ -289,7 +289,7 @@ public class Kairo {
 		return (title == null) ? "Kairo" : title;
 	}
 
-	private void applyWindowModeState(boolean windowed) {
+	private final void applyWindowModeState(boolean windowed) {
 		controller.setWindowMode(windowed);
 		settings.load();
 		if (windowed) {
@@ -319,7 +319,7 @@ public class Kairo {
 		});
 	}
 
-	public void setWindowMode(boolean windowed)
+	public final void setWindowMode(boolean windowed)
 	{
 		applyWindowModeState(windowed);
 	}

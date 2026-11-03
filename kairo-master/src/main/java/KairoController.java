@@ -211,16 +211,16 @@ public class KairoController {
 		}
 		image[0]=image[25];
 		this.windowOffset = new Point(
-				(int)Math.round(-16 * effectiveScale),
-				(int)Math.round(-30 * effectiveScale));
+				Math.round(-16 * effectiveScale),
+				Math.round(-30 * effectiveScale));
 		w=image[1].getIconWidth();
 		h=image[1].getIconHeight();
 	}
 
 	private ImageIcon scaleIcon(ImageIcon source, float scaleFactor) {
 		if (source == null || source.getImage() == null) return source;
-		int scaledWidth = Math.max(1, (int)Math.round(source.getIconWidth() * scaleFactor));
-		int scaledHeight = Math.max(1, (int)Math.round(source.getIconHeight() * scaleFactor));
+		int scaledWidth = Math.max(1, Math.round(source.getIconWidth() * scaleFactor));
+		int scaledHeight = Math.max(1, Math.round(source.getIconHeight() * scaleFactor));
 		Image scaledImage = source.getImage().getScaledInstance(scaledWidth, scaledHeight, Image.SCALE_SMOOTH);
 		return new ImageIcon(scaledImage);
 	}
