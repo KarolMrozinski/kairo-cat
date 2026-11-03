@@ -10,13 +10,13 @@
   <a href="#license"><img alt="License" src="https://img.shields.io/badge/License-Limited-orange" /></a>
 </p>
 
-Kairo Cat is a polished desktop companion built in Java Swing. It lives on your screen as a calm, observant cat that follows your cursor, reacts to your presence, and settles into distinct idle moods depending on your working rhythm.
+Kairo Cat is a refined desktop companion built with Java Swing for users who want a calmer, more intentional digital workspace. It lives quietly in the background as a responsive cat that follows the cursor, adapts to activity, and brings personality to the desktop without disrupting focus.
 
-The project is intentionally designed to feel thoughtful rather than noisy: subtle motion, personality-driven behavior, and a clean visual identity make it feel more like a premium desktop companion than a simple demo app.
+The experience is designed to feel deliberate and premium rather than noisy or gimmicky: subtle motion, personality-driven behavior, and a polished visual identity position Kairo as a thoughtful productivity companion rather than a simple demo application.
 
-## Why this project feels different
+## Why this project stands out
 
-Kairo is built to be present without being intrusive. It keeps its own personality while staying respectful of your workspace, moving around the desktop in a calm, natural way instead of feeling artificial or distracting.
+Kairo is designed for modern desktop workflows where presence matters more than attention. It keeps its character while respecting the user’s environment, moving with a natural rhythm that feels intelligent, understated, and product-ready rather than artificial or distracting.
 
 <div align="center">
   <table>
