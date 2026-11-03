@@ -13,11 +13,7 @@
 
 Kairo Cat is a Java Swing desktop companion that follows the cursor, reacts to activity, and brings personality to the desktop through a small animated cat character. It is designed as a functional desktop application with a polished presentation, smooth movement, and configurable behavior that can be adjusted in-app.
 
-## Product overview
-
-Kairo is a desktop companion application focused on personality, motion, and ambient presence. The cat moves around the screen, reacts to user activity, and switches between different behavior states such as active tracking, idling, and attention-based reactions. The app is built to feel alive without becoming disruptive, while still remaining a complete working desktop experience.
-
-## How it works
+## How it works ?
 
 The application runs as a lightweight desktop utility and continuously tracks the mouse cursor position. Based on the distance and behavior state, the cat decides whether to move toward the cursor, remain idle, or react to user interaction. It also respects screen edges and desktop boundaries so the character remains in a stable and usable position while moving across the environment.
 
