@@ -14,7 +14,7 @@ Kairo is a polished desktop companion built in Java Swing. It lives on your scre
 
 This project is designed to feel less like a demo and more like a thoughtful desktop experience: subtle motion, personal behavior, and a clean identity across code, UI, and documentation.
 
-## Why Kairo
+## Why Kairo ?
 
 Kairo is meant to be present without being intrusive. It reacts gently to movement, exhibits personality through idle behavior, and supports both floating-overlay and framed window modes.
 
