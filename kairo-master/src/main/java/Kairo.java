@@ -171,6 +171,8 @@ public class Kairo {
 		final JSlider runDist = new JSlider(1, 100, settings.getRunDist());
 		final JSlider offsetX = new JSlider(-100, 100, settings.getOffsetX());
 		final JSlider offsetY = new JSlider(-100, 100, settings.getOffsetY());
+		final javax.swing.JComboBox<String> activityMode = new javax.swing.JComboBox<String>(new String[] { "calm", "active", "playful" });
+		activityMode.setSelectedItem(settings.getActivityMode());
 
 		fields.add(new JLabel("Trigger distance"));
 		fields.add(triggerDist);
@@ -182,8 +184,16 @@ public class Kairo {
 		fields.add(offsetX);
 		fields.add(new JLabel("Offset Y"));
 		fields.add(offsetY);
+		fields.add(new JLabel("Activity mode"));
+		fields.add(activityMode);
 
-		final JPanel buttons = new JPanel(new GridLayout(1, 2, 8, 0));
+		final JPanel buttons = new JPanel(new GridLayout(1, 3, 8, 0));
+		final JButton centerButton = new JButton("Center Kairo");
+		centerButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent e) {
+				controller.recenterCat();
+			}
+		});
 		final JButton applyButton = new JButton("Apply");
 		applyButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent e) {
@@ -192,7 +202,9 @@ public class Kairo {
 				settings.setRunDist(runDist.getValue());
 				settings.setOffsetX(offsetX.getValue());
 				settings.setOffsetY(offsetY.getValue());
+				settings.setActivityMode((String) activityMode.getSelectedItem());
 				settings.save();
+				controller.setActivityMode(settings.getActivityMode());
 				dialog.dispose();
 			}
 		});
@@ -202,6 +214,7 @@ public class Kairo {
 				dialog.dispose();
 			}
 		});
+		buttons.add(centerButton);
 		buttons.add(applyButton);
 		buttons.add(closeButton);
 

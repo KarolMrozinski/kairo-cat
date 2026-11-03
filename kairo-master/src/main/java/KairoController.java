@@ -84,6 +84,7 @@ public class KairoController {
 	private boolean isIdleAnimationPrepared;
 	private int idleMood;
 	private long lastInteractionTime;
+	private String activityMode;
 	private ImageIcon image[];  //images
 	private Point windowOffset = new Point(-16, -30);
 	private Rectangle kairoBounds = new Rectangle();
@@ -112,6 +113,7 @@ public class KairoController {
 		this.idleMood = 0;
 		this.lastInteractionTime = System.currentTimeMillis();
 		this.isIdleAnimationPrepared = false;
+		this.activityMode = this.settings.getActivityMode();
 
 		loadKitten();
 		w=image[1].getIconWidth();
@@ -344,10 +346,13 @@ public class KairoController {
 	}
 
 	private void advanceIdleAnimation(Position pos) {
-		boolean isLongIdle = System.currentTimeMillis() - lastInteractionTime > 5000L;
+		boolean isLongIdle = System.currentTimeMillis() - lastInteractionTime > getIdleThreshold();
 		if (isLongIdle && !isIdleAnimationPrepared) {
 			idleMood = (idleMood + 1) % 3;
 			isIdleAnimationPrepared = true;
+			if ("playful".equals(activityMode)) {
+				no = FRAME_LICK;
+			}
 		}
 		if (!isLongIdle) {
 			isIdleAnimationPrepared = false;
@@ -477,14 +482,30 @@ public class KairoController {
 		}
 	}
 
+	private long getIdleThreshold() {
+		if ("calm".equals(activityMode)) {
+			return 8000L;
+		}
+		if ("active".equals(activityMode)) {
+			return 3000L;
+		}
+		return 4000L;
+	}
+
 	private int selectIdleMoodFrame() {
+		if ("calm".equals(activityMode)) {
+			return idleMood == 0 ? FRAME_SCRATCH : FRAME_YAWN;
+		}
+		if ("active".equals(activityMode)) {
+			return idleMood == 0 ? FRAME_SCRATCH : FRAME_SIT;
+		}
 		if (idleMood == 0) {
 			return FRAME_SCRATCH;
 		}
 		if (idleMood == 1) {
-			return FRAME_YAWN;
+			return FRAME_LICK;
 		}
-		return FRAME_SLEEP;
+		return FRAME_YAWN;
 	}
 
 	private void moveCat() {
@@ -498,7 +519,55 @@ public class KairoController {
 	}
 
 	public void setWindowMode(boolean windowed) {
-		this.windowMode=windowed;
+		this.windowMode = windowed;
+		repositionCatForCurrentMode();
+	}
+
+	public void setActivityMode(String mode) {
+		this.activityMode = (mode == null) ? "calm" : mode;
+		this.idleMood = 0;
+	}
+
+	public void repositionCatForCurrentMode() {
+		PointerInfo pointerInfo = MouseInfo.getPointerInfo();
+		if (pointerInfo == null) return;
+		calculateBounds(pointerInfo);
+		if (windowMode) {
+			ox = kairoBounds.x + kairoBounds.width / 2;
+			oy = kairoBounds.y + kairoBounds.height / 2;
+			if (catbox != null) {
+				Dimension d = catbox.getSize();
+				catbox.setLocation(ox - d.width / 2, Math.max(0, oy - d.height / 2));
+			}
+		}
+		else {
+			Point mouse = pointerInfo.getLocation();
+			int cx = mouse.x + settings.getOffsetX();
+			int cy = mouse.y + settings.getOffsetY();
+			ox = Math.max(kairoBounds.x, Math.min(cx, kairoBounds.x + kairoBounds.width));
+			oy = Math.max(kairoBounds.y, Math.min(cy, kairoBounds.y + kairoBounds.height));
+		}
+		moveCat();
+	}
+
+	public void recenterCat() {
+		PointerInfo pointerInfo = MouseInfo.getPointerInfo();
+		if (pointerInfo == null) return;
+		calculateBounds(pointerInfo);
+		if (windowMode) {
+			ox = kairoBounds.x + kairoBounds.width / 2;
+			oy = kairoBounds.y + kairoBounds.height / 2;
+		}
+		else {
+			Point mouse = pointerInfo.getLocation();
+			ox = mouse.x + settings.getOffsetX();
+			oy = mouse.y + settings.getOffsetY();
+			ox = Math.max(kairoBounds.x, Math.min(ox, kairoBounds.x + kairoBounds.width));
+			oy = Math.max(kairoBounds.y, Math.min(oy, kairoBounds.y + kairoBounds.height));
+		}
+		lastInteractionTime = System.currentTimeMillis();
+		mouseMoved = true;
+		moveCat();
 	}
 
 	public void moveCatInBox() {

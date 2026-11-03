@@ -140,6 +140,15 @@ public class Settings {
 		override.put(key, value);
 	}
 
+	public void setString(String key, String value)
+	{
+		if (value == null) {
+			override.remove(key);
+			return;
+		}
+		override.put(key, value);
+	}
+
 	public void save()
 	{
 		if (homefile == null) return;

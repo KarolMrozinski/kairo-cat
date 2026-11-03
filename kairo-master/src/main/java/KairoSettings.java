@@ -29,6 +29,7 @@ public class KairoSettings {
 	private static final String SLEEP_DELAY = "sleepDelay";
 	private static final String YAWN_DELAY = "yawnDelay";
 	private static final String SURPRISE_DELAY = "surpriseDelay";
+	private static final String ACTIVITY_MODE = "activityMode";
 
 	private Settings settings;
 	private int triggerDist;
@@ -43,6 +44,7 @@ public class KairoSettings {
 	private int sleepDelay;
 	private int yawnDelay;
 	private int surpriseDelay;
+	private String activityMode;
 	private int offsetX;
 	private int offsetY;
 
@@ -76,12 +78,14 @@ public class KairoSettings {
 	public int getSleepDelay() { return sleepDelay;}
 	public int getYawnDelay() { return yawnDelay;}
 	public int getSurpriseDelay() { return surpriseDelay;}
+	public String getActivityMode() { return activityMode; }
 
 	public void setTriggerDist(int value) { triggerDist = value; settings.setInt(TRIGGER_DIST, value); }
 	public void setCatchDist(int value) { catchDist = value; settings.setInt(CATCH_DIST, value); }
 	public void setRunDist(int value) { runDist = value; settings.setInt(RUN_DIST, value); }
 	public void setOffsetX(int value) { offsetX = value; settings.setInt(OFFSETX, value); }
 	public void setOffsetY(int value) { offsetY = value; settings.setInt(OFFSETY, value); }
+	public void setActivityMode(String value) { activityMode = value; settings.setString(ACTIVITY_MODE, value); }
 	public void save() { settings.save(); }
 
 	public void load()
@@ -95,6 +99,7 @@ public class KairoSettings {
 		runDist = settings.getInt(RUN_DIST,16);
 		offsetX = settings.getInt(OFFSETX,0);
 		offsetY = settings.getInt(OFFSETY,0);
+		activityMode = settings.getString(ACTIVITY_MODE, "calm");
 
 		sleepDelay = settings.getInt(SLEEP_DELAY,1000);
 		yawnDelay = settings.getInt(YAWN_DELAY,1000);
