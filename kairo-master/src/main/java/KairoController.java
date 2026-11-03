@@ -81,6 +81,9 @@ public class KairoController {
 	private int ilc1;	 //image loop counter
 	private int ilc2;	 //second loop counter
 	private boolean mouseMoved; //mouse move, flag
+	private boolean isIdleAnimationPrepared;
+	private int idleMood;
+	private long lastInteractionTime;
 	private ImageIcon image[];  //images
 	private Point windowOffset = new Point(-16, -30);
 	private Rectangle kairoBounds = new Rectangle();
@@ -106,6 +109,9 @@ public class KairoController {
 		this.init=0;
 		this.state=0;
 		this.slp=0;
+		this.idleMood = 0;
+		this.lastInteractionTime = System.currentTimeMillis();
+		this.isIdleAnimationPrepared = false;
 
 		loadKitten();
 		w=image[1].getIconWidth();
@@ -223,6 +229,9 @@ public class KairoController {
 		// If the kitty is already moving, keep moving;
 		// If not moving, but the mouse is over 64px away, wake up!
 		mouseMoved = mouseMoved || dist > settings.getTriggerDist();
+		if (mouseMoved) {
+			lastInteractionTime = System.currentTimeMillis();
+		}
 		//
 		slp = Math.max(0, slp - timer.getDelay());
 		if (slp == 0)
@@ -335,6 +344,15 @@ public class KairoController {
 	}
 
 	private void advanceIdleAnimation(Position pos) {
+		boolean isLongIdle = System.currentTimeMillis() - lastInteractionTime > 5000L;
+		if (isLongIdle && !isIdleAnimationPrepared) {
+			idleMood = (idleMood + 1) % 3;
+			isIdleAnimationPrepared = true;
+		}
+		if (!isLongIdle) {
+			isIdleAnimationPrepared = false;
+		}
+
 		switch (no) {
 			case FRAME_DEFAULT:
 				if (pos != null) {
@@ -367,7 +385,7 @@ public class KairoController {
 				no = 18;
 				ilc1++;
 				if (ilc1 == 6) {
-					no = FRAME_SCRATCH;
+					no = selectIdleMoodFrame();
 					ilc1 = 0;
 				}
 				break;
@@ -380,7 +398,7 @@ public class KairoController {
 				no = 22;
 				ilc1++;
 				if (ilc1 == 6) {
-					no = FRAME_SCRATCH;
+					no = selectIdleMoodFrame();
 					ilc1 = 0;
 				}
 				break;
@@ -393,7 +411,7 @@ public class KairoController {
 				no = 24;
 				ilc1++;
 				if (ilc1 == 6) {
-					no = FRAME_SCRATCH;
+					no = selectIdleMoodFrame();
 					ilc1 = 0;
 				}
 				break;
@@ -406,7 +424,7 @@ public class KairoController {
 				no = 20;
 				ilc1++;
 				if (ilc1 == 6) {
-					no = FRAME_SCRATCH;
+					no = selectIdleMoodFrame();
 					ilc1 = 0;
 				}
 				break;
@@ -420,7 +438,7 @@ public class KairoController {
 				ilc1++;
 				if (ilc1 == 6) {
 					slp = settings.getScratchDelay();
-					no = FRAME_SCRATCH;
+					no = selectIdleMoodFrame();
 					ilc1 = 0;
 				}
 				break;
@@ -436,7 +454,7 @@ public class KairoController {
 				no = FRAME_SCRATCH;
 				ilc2++;
 				if (ilc2 == 4) {
-					no = FRAME_YAWN;
+					no = selectIdleMoodFrame();
 					slp = settings.getYawnDelay();
 					ilc2 = 0;
 				}
@@ -457,6 +475,16 @@ public class KairoController {
 				no = FRAME_DEFAULT;
 				break;
 		}
+	}
+
+	private int selectIdleMoodFrame() {
+		if (idleMood == 0) {
+			return FRAME_SCRATCH;
+		}
+		if (idleMood == 1) {
+			return FRAME_YAWN;
+		}
+		return FRAME_SLEEP;
 	}
 
 	private void moveCat() {
