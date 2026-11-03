@@ -2,7 +2,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 <!--
-Copyright (c) 2019 Gerald Reno, Jr. Public domain, released under the Unlicense http://unlicense.org
+Copyright (C) 2026 Karol Mrozinski. All rights reserved.
+This project is distributed under the LIMITED SOURCE-AVAILABLE & VIEW-ONLY LICENSE.
 -->
 
 <modelVersion>4.0.0</modelVersion>
@@ -11,13 +12,13 @@ Copyright (c) 2019 Gerald Reno, Jr. Public domain, released under the Unlicense 
 <artifactId>kairo</artifactId>
 <version>2.0.2-SNAPSHOT</version>
 
-<name>kairo</name>
-<description>A kitty that chases your mouse!</description>
+<name>Kairo</name>
+<description>Desktop companion with a calm, reactive personality.</description>
 
 <licenses>
     <license>
-        <name>Unlicense</name>
-        <url>http://unlicense.org</url>
+        <name>LIMITED SOURCE-AVAILABLE &amp; VIEW-ONLY LICENSE</name>
+        <url>https://opensource.org/licenses</url>
         <distribution>repo</distribution>
     </license>
 </licenses>

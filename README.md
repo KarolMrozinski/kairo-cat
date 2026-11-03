@@ -1,23 +1,24 @@
 # Kairo
 
-Kairo is a tiny desktop companion that follows your mouse pointer around the screen, naps when idle, and can be toggled between floating overlay mode and windowed mode.
+Kairo is a lightweight desktop companion for Java Swing. It follows your cursor, settles into idle moods, and can be used as either a floating overlay or a framed desktop window.
 
-This project is a rebranded fork of the classic desktop cat toy idea, adapted into a Java Swing application.
+The project is designed around a calm, playful personality: Kairo feels observant, reactive, and quietly present rather than merely decorative.
 
 ## Features
 
 - Follows the mouse cursor across the desktop
-- Supports windowed and floating modes
-- Idle animations, scratching, yawning, and sleeping states
-- Works with multiple monitors via screen-aware positioning
-- Simple configuration via `kairo.properties`
-- Lightweight Swing-based implementation
+- Supports overlay and windowed presentation modes
+- Idle behavior with scratching, yawning, and sleep-like states
+- Personality modes: calm, active, and playful
+- Multi-monitor-aware positioning and bounds handling
+- Runtime configuration via `kairo.properties` and the in-app settings dialog
+- Lightweight Swing implementation
 
 ## Project structure
 
 - `src/main/java/` — application source code
 - `src/main/resources/` — configuration and runtime assets
-- `docs/` — documentation and packaged release artifact
+- `docs/` — supporting documentation and release notes
 - `pom.xml` — Maven build configuration
 
 ## Requirements
@@ -43,22 +44,25 @@ java -cp out Kairo
 
 ## Configuration
 
-The behavior is configurable through `src/main/resources/kairo.properties`.
+The app behaviour is configured from `src/main/resources/kairo.properties` and can also be adjusted through the in-app settings dialog.
 
-Key settings include:
+Notable settings include:
 
 - `windowTitle`
 - `triggerDistance`
 - `runDistancePerFrame`
 - `offsetx` / `offsety`
 - animation timing values
+- `activityMode`
 
-## Credits
+## Design direction
 
-- Original concept: classic desktop cat / neko-style cursor toy
-- Java port inspiration: Werner Randelshofer
-- This fork: Gerald Reno and contributors
-- Image assets: public domain / historical material
+Kairo is intentionally presented as a desktop companion rather than a toy demo. The project emphasizes:
+
+- gentle presence over noisy motion
+- personality over raw animation speed
+- clarity over legacy complexity
+- a single, coherent brand identity across code, UI, and documentation
 
 ## License
 

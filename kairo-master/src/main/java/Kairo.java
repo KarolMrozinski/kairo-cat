@@ -92,15 +92,21 @@ public class Kairo {
 		String title=settings.getTitle();
 		if ( title==null ) title="Kairo";
 		catbox=new JFrame(title);
-		catbox.setBackground(new Color(200,200,200,255));
+		catbox.setBackground(new Color(235, 238, 242, 255));
 		catbox.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		catbox.setAlwaysOnTop(true);
+		catbox.setAutoRequestFocus(false);
+		catbox.setFocusable(false);
 		invisibleWindow=new JWindow();
 		invisibleWindow.getRootPane().putClientProperty("Window.shadow", false);
-		invisibleWindow.setBackground(new Color(200,200,200,0)); // transparent, light grey of not supported
+		invisibleWindow.setBackground(new Color(0, 0, 0, 0));
 		invisibleWindow.setAlwaysOnTop(true);
+		invisibleWindow.setFocusable(false);
 
 		freeLabel = new JLabel();
 		boxLabel = new JLabel();
+		freeLabel.setOpaque(false);
+		boxLabel.setOpaque(false);
 
 		MouseListener mouseMoveListener = new MouseAdapter() {
 			public void mouseClicked(MouseEvent evt) {
@@ -165,7 +171,9 @@ public class Kairo {
 		final JPanel content = new JPanel(new BorderLayout(12, 12));
 		content.setBorder(javax.swing.BorderFactory.createEmptyBorder(12, 12, 12, 12));
 
-		final JPanel fields = new JPanel(new GridLayout(0, 2, 8, 8));
+		final JPanel fields = new JPanel(new GridLayout(0, 2, 10, 8));
+		fields.setBorder(javax.swing.BorderFactory.createTitledBorder("Behaviour"));
+
 		final JSlider triggerDist = new JSlider(1, 200, settings.getTriggerDist());
 		final JSlider catchDist = new JSlider(1, 100, settings.getCatchDist());
 		final JSlider runDist = new JSlider(1, 100, settings.getRunDist());
@@ -174,18 +182,12 @@ public class Kairo {
 		final javax.swing.JComboBox<String> activityMode = new javax.swing.JComboBox<String>(new String[] { "calm", "active", "playful" });
 		activityMode.setSelectedItem(settings.getActivityMode());
 
-		fields.add(new JLabel("Trigger distance"));
-		fields.add(triggerDist);
-		fields.add(new JLabel("Catch distance"));
-		fields.add(catchDist);
-		fields.add(new JLabel("Run distance"));
-		fields.add(runDist);
-		fields.add(new JLabel("Offset X"));
-		fields.add(offsetX);
-		fields.add(new JLabel("Offset Y"));
-		fields.add(offsetY);
-		fields.add(new JLabel("Activity mode"));
-		fields.add(activityMode);
+		addLabeledControl(fields, "Trigger distance", triggerDist);
+		addLabeledControl(fields, "Catch distance", catchDist);
+		addLabeledControl(fields, "Run distance", runDist);
+		addLabeledControl(fields, "Offset X", offsetX);
+		addLabeledControl(fields, "Offset Y", offsetY);
+		addLabeledControl(fields, "Activity mode", activityMode);
 
 		final JPanel buttons = new JPanel(new GridLayout(1, 3, 8, 0));
 		final JButton centerButton = new JButton("Center Kairo");
@@ -221,7 +223,15 @@ public class Kairo {
 		content.add(fields, BorderLayout.CENTER);
 		content.add(buttons, BorderLayout.SOUTH);
 		dialog.setContentPane(content);
+		dialog.pack();
 		return dialog;
+	}
+
+	private void addLabeledControl(JPanel target, String labelText, Component control) {
+		JLabel label = new JLabel(labelText);
+		label.setHorizontalAlignment(SwingConstants.LEFT);
+		target.add(label);
+		target.add(control);
 	}
 
 	private String resolveWindowTitle() {
@@ -234,10 +244,13 @@ public class Kairo {
 		settings.load();
 		if (windowed) {
 			catbox.setTitle(resolveWindowTitle());
+			catbox.setOpacity(0.96f);
+			catbox.setBackground(new Color(245, 246, 249, 255));
 			invisibleWindow.setVisible(false);
 			catbox.setVisible(true);
 		}
 		else {
+			catbox.setOpacity(1.0f);
 			catbox.setVisible(false);
 			invisibleWindow.setVisible(true);
 		}

@@ -1,26 +1,25 @@
-kairo ![img](Kairo_animated.gif) 
-=====
+# Kairo
 
-The ever popular kitty-that-follows-your-mouse-pointer toy.
+![img](Kairo_animated.gif)
 
+Kairo is a playful desktop companion that follows your pointer and keeps quiet company while you work.
 
-Kairo is a playful desktop cat that follows your mouse pointer and keeps you company.
+This project is designed around a calm, reactive personality: Kairo is present without being intrusive, and it can shift between focused, active, and playful moods depending on the atmosphere.
 
-There are many versions of this idea. This project is released under the Unlicense.
+## What Kairo does
 
-This fork builds on the classic Java desktop cat concept and keeps the spirit of the original toy while rebranding it as Kairo.
+- follows the mouse cursor across the desktop
+- supports floating overlay and framed window modes
+- alternates between idle, scratch, yawn, and sleep-like states
+- adapts to different activity profiles for a more natural personality
+- remains lightweight and configurable for everyday desktop use
 
-The image files are ancient public domain.
-The Java code for v.1.0 is (c) 2010 Werner Randelhofer.
-The Java code for v.2.0 (c) 2019 Gerald Reno
+## Project notes
 
-Download executable jar
-=====
-[Download v.2.0.1](https://glreno.github.io/kairo/kairo-2.0.1.jar)
+Kairo is built as a coherent desktop companion experience rather than a historical artifact. The code, UI, and documentation are intentionally aligned to a single brand identity: Kairo.
 
-links
-=====
+## License
 
-[Source](https://github.com/glreno/kairo)
-[Project wiki](https://github.com/glreno/kairo/wiki)
-[History](https://en.wikipedia.org/wiki/Cat) 
+This project is released under the LIMITED SOURCE-AVAILABLE & VIEW-ONLY LICENSE.
+
+See the project [LICENSE](../LICENSE) for full legal terms.
