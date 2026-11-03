@@ -2,4 +2,8 @@ target/
 out/
 **/out/
 *.class
+.idea/
+.vscode//out/
+**/out/
+*.class
 

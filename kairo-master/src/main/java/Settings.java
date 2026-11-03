@@ -7,6 +7,7 @@
  *
  */
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -17,31 +18,33 @@ import java.util.Properties;
 
 /** Simple file-overridable resources */
 public class Settings {
-	private String fn;
-	private File homefile;
-	private Properties builtin;
-	private Properties override;
+	private final String fn;
+	private final File homefile;
+	private final Properties builtin;
+	private final Properties override;
 
 	/** Load all of the properties in src/main/resources/filename
 	 * and the file ~/filename
 	 */
 	public Settings(String filename)
 	{
-		fn=filename;
-		builtin=new Properties();
-		override=new Properties();
-		String home=System.getProperty("user.home");
-		homefile=new File(home,fn);
+		fn = filename;
+		builtin = new Properties();
+		override = new Properties();
+		String home = System.getProperty("user.home");
+		homefile = new File(home, fn);
 	}
 
 	public void load()
 	{
 		builtin.clear();
-		InputStream in=null;
+		InputStream in = null;
 		try
 		{
-			in=Settings.class.getResourceAsStream(fn);
-			builtin.load(in);
+			in = Settings.class.getResourceAsStream(fn);
+			if (in != null) {
+				builtin.load(in);
+			}
 		}
 		catch (IOException e)
 		{
@@ -49,11 +52,7 @@ public class Settings {
 		}
 		finally
 		{
-			if ( in!=null ) {
-				try{
-				in.close();
-				} catch(IOException e) {}
-			}
+			closeQuietly(in);
 		}
 
 		loadOverride();
@@ -62,11 +61,11 @@ public class Settings {
 	public void loadOverride()
 	{
 		override.clear();
-		if ( homefile==null || !homefile.exists() ) return;
-		InputStream in=null;
+		if (homefile == null || !homefile.exists()) return;
+		InputStream in = null;
 		try
 		{
-			in=new FileInputStream(homefile);
+			in = new FileInputStream(homefile);
 			override.load(in);
 		}
 		catch (IOException e)
@@ -75,87 +74,66 @@ public class Settings {
 		}
 		finally
 		{
-			if ( in!=null ) {
-				try{
-				in.close();
-				} catch(IOException e) {}
-			}
+			closeQuietly(in);
 		}
 	}
 
 	public String getString(String key)
 	{
-		return getString(key,null);
+		return getString(key, null);
 	}
 
-	public String getString(String key,String def)
+	public String getString(String key, String def)
 	{
-		Object ret=null;
-		ret=override.get(key);
-		if ( ret!=null ) return ret.toString();
-		ret=builtin.get(key);
-		if ( ret!=null ) return ret.toString();
+		Object value = resolveValue(override, key);
+		if (value != null) return value.toString();
+		value = resolveValue(builtin, key);
+		if (value != null) return value.toString();
 		return def;
 	}
 
 	public Boolean getBoolean(String key)
 	{
-		return getBoolean(key,null);
+		return getBoolean(key, null);
 	}
 
 	public Boolean getBoolean(String key, Boolean def)
 	{
-		Object ret=null;
-		ret=override.get(key);
-		if ( ret!=null )
-		{
-			if ( ret instanceof Boolean ) return (Boolean) ret;
-			try {
-				return Boolean.valueOf(ret.toString());
-			}
-			catch (Exception e) { }
+		Object value = resolveValue(override, key);
+		if (value != null) {
+			Boolean parsed = parseBoolean(value);
+			if (parsed != null) return parsed;
 		}
-		ret=builtin.get(key);
-		if ( ret!=null )
-		{
-			if ( ret instanceof Boolean ) return (Boolean) ret;
-			try {
-				return Boolean.valueOf(ret.toString());
-			}
-			catch (Exception e) { }
+		value = resolveValue(builtin, key);
+		if (value != null) {
+			Boolean parsed = parseBoolean(value);
+			if (parsed != null) return parsed;
 		}
 		return def;
 	}
 
 	public Integer getInt(String key)
 	{
-		return getInt(key,null);
+		return getInt(key, null);
 	}
 
 	public Integer getInt(String key, Integer def)
 	{
-		Object ret=null;
-		ret=override.get(key);
-		if ( ret!=null )
-		{
-			if ( ret instanceof Integer ) return (Integer) ret;
-			try {
-				Integer i = Integer.valueOf(ret.toString());
-				override.put(key,i);
-				return i;
+		Object value = resolveValue(override, key);
+		if (value != null) {
+			Integer parsed = parseInteger(value);
+			if (parsed != null) {
+				override.put(key, parsed);
+				return parsed;
 			}
-			catch (NumberFormatException e) { }
 		}
-		ret=builtin.get(key);
-		if ( ret!=null )
-		{
-			if ( ret instanceof Integer ) return (Integer) ret;
-			try {
-				Integer i = Integer.valueOf(ret.toString());
-				override.put(key,i);
-				return i;
+		value = resolveValue(builtin, key);
+		if (value != null) {
+			Integer parsed = parseInteger(value);
+			if (parsed != null) {
+				override.put(key, parsed);
+				return parsed;
 			}
-			catch (NumberFormatException e) { }
 		}
 		return def;
 	}
@@ -203,12 +181,39 @@ public class Settings {
 			e.printStackTrace();
 		}
 		finally {
-			if (out != null) {
-				try {
-					out.close();
-				} catch (IOException e) { }
-			}
+			closeQuietly(out);
 		}
+	}
+
+	private Object resolveValue(Properties source, String key) {
+		return source.get(key);
+	}
+
+	private Boolean parseBoolean(Object value) {
+		if (value instanceof Boolean) return (Boolean) value;
+		try {
+			return Boolean.valueOf(value.toString());
+		}
+		catch (Exception e) {
+			return null;
+		}
+	}
+
+	private Integer parseInteger(Object value) {
+		if (value instanceof Integer) return (Integer) value;
+		try {
+			return Integer.valueOf(value.toString());
+		}
+		catch (NumberFormatException e) {
+			return null;
+		}
+	}
+
+	private void closeQuietly(Closeable closeable) {
+		if (closeable == null) return;
+		try {
+			closeable.close();
+		} catch (IOException e) { }
 	}
 
 }
