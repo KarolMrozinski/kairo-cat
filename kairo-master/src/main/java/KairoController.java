@@ -17,15 +17,19 @@
  */
 
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.Image;
 import java.awt.Insets;
+import java.awt.KeyboardFocusManager;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.PointerInfo;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.ImageIcon;
@@ -123,6 +127,10 @@ public class KairoController {
 	private boolean idleReactionsEnabled;
 	private boolean tailSwingEnabled;
 	private boolean smartBoundsEnabled;
+	private int scalePercent;
+	private int motionIntensity;
+	private int desktopMargin;
+	private int editorPadding;
 	private ImageIcon image[];  //images
 	private Point windowOffset = new Point(-16, -30);
 	private Rectangle kairoBounds = new Rectangle();
@@ -160,6 +168,10 @@ public class KairoController {
 		this.idleReactionsEnabled = this.settings.isIdleReactionsEnabled();
 		this.tailSwingEnabled = this.settings.isTailSwingEnabled();
 		this.smartBoundsEnabled = this.settings.isSmartBoundsEnabled();
+		this.scalePercent = Math.max(100, this.settings.getCatScalePercent());
+		this.motionIntensity = this.settings.getMotionIntensity();
+		this.desktopMargin = this.settings.getDesktopMargin();
+		this.editorPadding = this.settings.getEditorPadding();
 
 		loadKitten();
 		w=image[1].getIconWidth();
@@ -188,9 +200,21 @@ public class KairoController {
 		// image[0] is a default, image[25] is part of the wash animation with image[31]
 		image = new ImageIcon[33];
 		for (int i = 1; i <= 32; i++) {
-			image[i] = new ImageIcon(Kairo.class.getResource("images/" + i + ".GIF"));
+			ImageIcon source = new ImageIcon(Kairo.class.getResource("images/" + i + ".GIF"));
+			image[i] = scaleIcon(source, this.scalePercent);
 		}
 		image[0]=image[25];
+		this.windowOffset = new Point((int)Math.round(-16 * (this.scalePercent / 100.0)), (int)Math.round(-30 * (this.scalePercent / 100.0)));
+		w=image[1].getIconWidth();
+		h=image[1].getIconHeight();
+	}
+
+	private ImageIcon scaleIcon(ImageIcon source, int percent) {
+		if (source == null || source.getImage() == null) return source;
+		int scaledWidth = Math.max(1, (int)Math.round(source.getIconWidth() * (percent / 100.0)));
+		int scaledHeight = Math.max(1, (int)Math.round(source.getIconHeight() * (percent / 100.0)));
+		Image scaledImage = source.getImage().getScaledInstance(scaledWidth, scaledHeight, Image.SCALE_SMOOTH);
+		return new ImageIcon(scaledImage);
 	}
 
 	public int getWidth() { return w;}
@@ -199,6 +223,19 @@ public class KairoController {
 
 	private void calculateBounds(PointerInfo pointerInfo)
 	{
+		if (settings.isFocusModeEnabled()) {
+			Rectangle editorBounds = getFocusedEditorBounds();
+			if (editorBounds != null) {
+				kairoBounds = editorBounds;
+				if (windowMode) {
+					kairoBounds.x += w / 2;
+					kairoBounds.y += h;
+					kairoBounds.width = Math.max(0, kairoBounds.width - w);
+					kairoBounds.height = Math.max(0, kairoBounds.height - h);
+				}
+				return;
+			}
+		}
 		if(windowMode)
 		{
 			// kairoBounds is the area of the window that the Kairo can be in
@@ -218,10 +255,12 @@ public class KairoController {
 
 		kairoBounds = usableBounds;
 		if (smartBoundsEnabled) {
-			kairoBounds.x += w / 2;
-			kairoBounds.y += h;
-			kairoBounds.width = Math.max(0, kairoBounds.width - w);
-			kairoBounds.height = Math.max(0, kairoBounds.height - h);
+			int safeInsetX = Math.max(8, desktopMargin);
+			int safeInsetY = Math.max(10, Math.round(desktopMargin * 0.75f));
+			kairoBounds.x += safeInsetX;
+			kairoBounds.y += safeInsetY;
+			kairoBounds.width = Math.max(0, kairoBounds.width - (safeInsetX * 2));
+			kairoBounds.height = Math.max(0, kairoBounds.height - (safeInsetY * 2));
 		}
 		else {
 			kairoBounds.x += 8;
@@ -229,6 +268,44 @@ public class KairoController {
 			kairoBounds.width = Math.max(0, kairoBounds.width - 16);
 			kairoBounds.height = Math.max(0, kairoBounds.height - 16);
 		}
+	}
+
+	private Rectangle getFocusedEditorBounds() {
+		Window activeWindow = KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow();
+		if (activeWindow == null) {
+			for (Window window : Window.getWindows()) {
+				if (window != null && window.isVisible() && isCodeEditorWindow(window)) {
+					return createWindowRoamBounds(window);
+				}
+			}
+			return null;
+		}
+		if (!isCodeEditorWindow(activeWindow)) {
+			return null;
+		}
+		return createWindowRoamBounds(activeWindow);
+	}
+
+	private boolean isCodeEditorWindow(Window window) {
+		if (window == null || !window.isVisible()) return false;
+		String title = window.getClass().getName();
+		if (window instanceof Frame) {
+			title += " " + ((Frame) window).getTitle();
+		}
+		String normalized = title.toLowerCase();
+		return normalized.contains("code") && (normalized.contains("visual studio") || normalized.contains("vscode") || normalized.contains("code - ") || normalized.contains("code"));
+	}
+
+	private Rectangle createWindowRoamBounds(Window window) {
+		Rectangle bounds = window.getBounds();
+		if (bounds == null) return null;
+		int paddingX = Math.max(64, Math.max(w * 2, editorPadding));
+		int paddingY = Math.max(48, Math.max(h * 2, editorPadding / 2));
+		return new Rectangle(
+				bounds.x - paddingX,
+				bounds.y - paddingY,
+				Math.max(0, bounds.width + (paddingX * 2)),
+				Math.max(0, bounds.height + (paddingY * 2)));
 	}
 
 	private Rectangle getDesktopBounds(PointerInfo pointerInfo) {
@@ -366,14 +443,15 @@ public class KairoController {
 			slp = settings.getRunDelay(); // 5fps, 200ms
 			// note that ox,oy are screen-relative
 			double run = settings.getRunDist(); // 16
+			double motionScale = motionIntensity / 100.0;
 			if ("calm".equals(activityMode) || "sleepy".equals(activityMode)) {
-				run *= 0.8;
+				run *= (0.8 + (motionScale * 0.15));
 			}
 			else if ("playful".equals(activityMode) || "mischievous".equals(activityMode)) {
-				run *= 1.35;
+				run *= (1.35 + (motionScale * 0.25));
 			}
 			if ("curious".equals(activityMode)) {
-				run *= 1.1;
+				run *= (1.1 + (motionScale * 0.18));
 			}
 			if (run > dist) {
 				run = dist;
@@ -701,9 +779,27 @@ public class KairoController {
 		this.idleReactionsEnabled = this.settings.isIdleReactionsEnabled();
 		this.tailSwingEnabled = this.settings.isTailSwingEnabled();
 		this.smartBoundsEnabled = this.settings.isSmartBoundsEnabled();
+		this.motionIntensity = this.settings.getMotionIntensity();
+		this.desktopMargin = this.settings.getDesktopMargin();
+		this.editorPadding = this.settings.getEditorPadding();
 		this.activityMode = normalizeActivityMode(this.settings.getPersonalityProfile() != null ? this.settings.getPersonalityProfile() : this.settings.getActivityMode());
 		this.personalityProfile = PersonalityProfile.fromMode(this.activityMode);
 		this.lastInteractionTime = System.currentTimeMillis();
+	}
+
+	public void applyScale() {
+		this.scalePercent = Math.max(100, this.settings.getCatScalePercent());
+		loadKitten();
+		w = image[1].getIconWidth();
+		h = image[1].getIconHeight();
+		if (windowMode) {
+			catbox.setSize(16 * w, 9 * h);
+		}
+		PointerInfo pointerInfo = MouseInfo.getPointerInfo();
+		if (pointerInfo != null) {
+			calculateBounds(pointerInfo);
+		}
+		moveCat();
 	}
 
 	public void reactToClick() {

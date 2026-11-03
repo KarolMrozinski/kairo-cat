@@ -40,6 +40,10 @@ public class KairoSettings {
 	private static final String COMPACT_MODE = "compactMode";
 	private static final String FOCUS_MODE = "focusMode";
 	private static final String CONTEXT_MENU = "contextMenu";
+	private static final String CAT_SCALE_PERCENT = "catScalePercent";
+	private static final String MOTION_INTENSITY = "motionIntensity";
+	private static final String DESKTOP_MARGIN = "desktopMargin";
+	private static final String EDITOR_PADDING = "editorPadding";
 
 	private Settings settings;
 	private int triggerDist;
@@ -65,6 +69,10 @@ public class KairoSettings {
 	private boolean compactMode;
 	private boolean focusMode;
 	private boolean contextMenu;
+	private int catScalePercent;
+	private int motionIntensity;
+	private int desktopMargin;
+	private int editorPadding;
 	private int offsetX;
 	private int offsetY;
 
@@ -109,6 +117,10 @@ public class KairoSettings {
 	public boolean isCompactModeEnabled() { return compactMode; }
 	public boolean isFocusModeEnabled() { return focusMode; }
 	public boolean isContextMenuEnabled() { return contextMenu; }
+	public int getCatScalePercent() { return catScalePercent; }
+	public int getMotionIntensity() { return motionIntensity; }
+	public int getDesktopMargin() { return desktopMargin; }
+	public int getEditorPadding() { return editorPadding; }
 
 	public void setTriggerDist(int value) { triggerDist = value; settings.setInt(TRIGGER_DIST, value); }
 	public void setCatchDist(int value) { catchDist = value; settings.setInt(CATCH_DIST, value); }
@@ -126,6 +138,10 @@ public class KairoSettings {
 	public void setCompactMode(boolean value) { compactMode = value; settings.setBoolean(COMPACT_MODE, value); }
 	public void setFocusMode(boolean value) { focusMode = value; settings.setBoolean(FOCUS_MODE, value); }
 	public void setContextMenu(boolean value) { contextMenu = value; settings.setBoolean(CONTEXT_MENU, value); }
+	public void setCatScalePercent(int value) { catScalePercent = Math.max(100, value); settings.setInt(CAT_SCALE_PERCENT, catScalePercent); }
+	public void setMotionIntensity(int value) { motionIntensity = clampPercent(value); settings.setInt(MOTION_INTENSITY, motionIntensity); }
+	public void setDesktopMargin(int value) { desktopMargin = Math.max(0, value); settings.setInt(DESKTOP_MARGIN, desktopMargin); }
+	public void setEditorPadding(int value) { editorPadding = Math.max(0, value); settings.setInt(EDITOR_PADDING, editorPadding); }
 	public void save() { settings.save(); }
 
 	public void load()
@@ -150,6 +166,10 @@ public class KairoSettings {
 		compactMode = settings.getBoolean(COMPACT_MODE, false);
 		focusMode = settings.getBoolean(FOCUS_MODE, false);
 		contextMenu = settings.getBoolean(CONTEXT_MENU, true);
+		catScalePercent = Math.max(100, settings.getInt(CAT_SCALE_PERCENT, 100));
+		motionIntensity = clampPercent(settings.getInt(MOTION_INTENSITY, 100));
+		desktopMargin = Math.max(0, settings.getInt(DESKTOP_MARGIN, 24));
+		editorPadding = Math.max(0, settings.getInt(EDITOR_PADDING, 40));
 
 		sleepDelay = settings.getInt(SLEEP_DELAY,1000);
 		yawnDelay = settings.getInt(YAWN_DELAY,1000);
@@ -162,6 +182,10 @@ public class KairoSettings {
 		sharpenDelay=getDelay(SHARPEN_FRAMERATE);
 		loadDelay=getDelay(LOAD_FRAMERATE);
 
+	}
+
+	private int clampPercent(int value) {
+		return Math.max(50, Math.min(150, value));
 	}
 
 }

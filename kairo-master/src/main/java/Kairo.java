@@ -184,6 +184,10 @@ public class Kairo {
 		final JSlider runDist = new JSlider(1, 100, settings.getRunDist());
 		final JSlider offsetX = new JSlider(-100, 100, settings.getOffsetX());
 		final JSlider offsetY = new JSlider(-100, 100, settings.getOffsetY());
+		final JSlider catScale = new JSlider(100, 250, settings.getCatScalePercent());
+		final JSlider motionIntensity = new JSlider(50, 150, settings.getMotionIntensity());
+		final JSlider desktopMargin = new JSlider(0, 120, settings.getDesktopMargin());
+		final JSlider editorPadding = new JSlider(0, 160, settings.getEditorPadding());
 		final javax.swing.JComboBox<String> activityMode = new javax.swing.JComboBox<String>(new String[] { "calm", "active", "playful", "curious", "sleepy", "mischievous" });
 		activityMode.setSelectedItem(settings.getActivityMode());
 		final javax.swing.JComboBox<String> personalityProfile = new javax.swing.JComboBox<String>(new String[] { "calm", "active", "playful", "curious", "sleepy", "mischievous" });
@@ -195,7 +199,7 @@ public class Kairo {
 		final javax.swing.JCheckBox smartBounds = new javax.swing.JCheckBox("Smart monitor bounds", settings.isSmartBoundsEnabled());
 		final javax.swing.JCheckBox transparency = new javax.swing.JCheckBox("Window transparency", settings.isWindowTransparencyEnabled());
 		final javax.swing.JCheckBox compactMode = new javax.swing.JCheckBox("Compact mode", settings.isCompactModeEnabled());
-		final javax.swing.JCheckBox focusMode = new javax.swing.JCheckBox("Focus mode", settings.isFocusModeEnabled());
+		final javax.swing.JCheckBox focusMode = new javax.swing.JCheckBox("Keep off editor", settings.isFocusModeEnabled());
 		final javax.swing.JCheckBox contextMenu = new javax.swing.JCheckBox("Context menu", settings.isContextMenuEnabled());
 
 		addLabeledControl(fields, "Trigger distance", triggerDist);
@@ -203,6 +207,10 @@ public class Kairo {
 		addLabeledControl(fields, "Run distance", runDist);
 		addLabeledControl(fields, "Offset X", offsetX);
 		addLabeledControl(fields, "Offset Y", offsetY);
+		addLabeledControl(fields, "Cat size (%)", catScale);
+		addLabeledControl(fields, "Motion intensity", motionIntensity);
+		addLabeledControl(fields, "Desktop margin", desktopMargin);
+		addLabeledControl(fields, "Editor padding", editorPadding);
 		addLabeledControl(fields, "Activity mode", activityMode);
 		addLabeledControl(fields, "Personality profile", personalityProfile);
 		fields.add(followMouse);
@@ -230,6 +238,10 @@ public class Kairo {
 				settings.setRunDist(runDist.getValue());
 				settings.setOffsetX(offsetX.getValue());
 				settings.setOffsetY(offsetY.getValue());
+				settings.setCatScalePercent(catScale.getValue());
+				settings.setMotionIntensity(motionIntensity.getValue());
+				settings.setDesktopMargin(desktopMargin.getValue());
+				settings.setEditorPadding(editorPadding.getValue());
 				settings.setActivityMode((String) activityMode.getSelectedItem());
 				settings.setPersonalityProfile((String) personalityProfile.getSelectedItem());
 				settings.setFollowMouse(followMouse.isSelected());
@@ -244,6 +256,7 @@ public class Kairo {
 				settings.save();
 				controller.setActivityMode(settings.getActivityMode());
 				controller.setBehaviorOptions();
+				controller.applyScale();
 				dialog.dispose();
 			}
 		});
