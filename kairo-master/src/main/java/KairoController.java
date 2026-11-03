@@ -154,7 +154,7 @@ public class KairoController {
 		this.lastMoodShift = this.lastInteractionTime;
 		this.lastTailMove = this.lastInteractionTime;
 		this.isIdleAnimationPrepared = false;
-		this.activityMode = normalizeActivityMode(this.settings.getActivityMode());
+		this.activityMode = normalizeActivityMode(this.settings.getPersonalityProfile() != null ? this.settings.getPersonalityProfile() : this.settings.getActivityMode());
 		this.personalityProfile = PersonalityProfile.fromMode(this.activityMode);
 		this.followMouse = this.settings.isFollowMouse();
 		this.idleReactionsEnabled = this.settings.isIdleReactionsEnabled();
@@ -701,7 +701,7 @@ public class KairoController {
 		this.idleReactionsEnabled = this.settings.isIdleReactionsEnabled();
 		this.tailSwingEnabled = this.settings.isTailSwingEnabled();
 		this.smartBoundsEnabled = this.settings.isSmartBoundsEnabled();
-		this.activityMode = normalizeActivityMode(this.settings.getActivityMode());
+		this.activityMode = normalizeActivityMode(this.settings.getPersonalityProfile() != null ? this.settings.getPersonalityProfile() : this.settings.getActivityMode());
 		this.personalityProfile = PersonalityProfile.fromMode(this.activityMode);
 		this.lastInteractionTime = System.currentTimeMillis();
 	}
