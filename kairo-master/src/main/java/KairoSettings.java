@@ -6,31 +6,6 @@
  * http://unlicense.org 
  */
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.EventQueue;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsDevice;
-import java.awt.Insets;
-import java.awt.LayoutManager;
-import java.awt.MouseInfo;
-import java.awt.Point;
-import java.awt.PointerInfo;
-import java.awt.Rectangle;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JWindow;
-import javax.swing.Timer;
-import javax.swing.WindowConstants;
 
 public class KairoSettings {
 
@@ -101,6 +76,13 @@ public class KairoSettings {
 	public int getSleepDelay() { return sleepDelay;}
 	public int getYawnDelay() { return yawnDelay;}
 	public int getSurpriseDelay() { return surpriseDelay;}
+
+	public void setTriggerDist(int value) { triggerDist = value; settings.setInt(TRIGGER_DIST, value); }
+	public void setCatchDist(int value) { catchDist = value; settings.setInt(CATCH_DIST, value); }
+	public void setRunDist(int value) { runDist = value; settings.setInt(RUN_DIST, value); }
+	public void setOffsetX(int value) { offsetX = value; settings.setInt(OFFSETX, value); }
+	public void setOffsetY(int value) { offsetY = value; settings.setInt(OFFSETY, value); }
+	public void save() { settings.save(); }
 
 	public void load()
 	{

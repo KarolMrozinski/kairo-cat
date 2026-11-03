@@ -22,6 +22,7 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.GridLayout;
 import java.awt.LayoutManager;
 import java.awt.Point;
 import java.awt.event.ComponentAdapter;
@@ -33,9 +34,14 @@ import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSlider;
 import javax.swing.JWindow;
+import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
 
 /**
@@ -68,6 +74,7 @@ public class Kairo {
 	private JLabel freeLabel,boxLabel;
 	private KairoSettings settings;
 	private KairoController controller;
+	private JDialog settingsDialog;
 
 	/** Creates new form Kairo */
 	public Kairo() {
@@ -134,7 +141,94 @@ public class Kairo {
 	}
 
 	private void imageClicked(MouseEvent evt) {
+		if (evt.getButton() == MouseEvent.BUTTON3) {
+			showSettingsDialog();
+			return;
+		}
 		setWindowMode(!controller.getWindowMode());
+	}
+
+	private void showSettingsDialog() {
+		if (settingsDialog == null) {
+			settingsDialog = createSettingsDialog();
+		}
+		settingsDialog.pack();
+		settingsDialog.setLocationRelativeTo(catbox);
+		settingsDialog.setVisible(true);
+	}
+
+	private JDialog createSettingsDialog() {
+		final JDialog dialog = new JDialog(catbox, "Kairo settings", true);
+		dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		dialog.setResizable(false);
+
+		final JPanel content = new JPanel(new BorderLayout(12, 12));
+		content.setBorder(javax.swing.BorderFactory.createEmptyBorder(12, 12, 12, 12));
+
+		final JPanel fields = new JPanel(new GridLayout(0, 2, 8, 8));
+		final JSlider triggerDist = new JSlider(1, 200, settings.getTriggerDist());
+		final JSlider catchDist = new JSlider(1, 100, settings.getCatchDist());
+		final JSlider runDist = new JSlider(1, 100, settings.getRunDist());
+		final JSlider offsetX = new JSlider(-100, 100, settings.getOffsetX());
+		final JSlider offsetY = new JSlider(-100, 100, settings.getOffsetY());
+
+		fields.add(new JLabel("Trigger distance"));
+		fields.add(triggerDist);
+		fields.add(new JLabel("Catch distance"));
+		fields.add(catchDist);
+		fields.add(new JLabel("Run distance"));
+		fields.add(runDist);
+		fields.add(new JLabel("Offset X"));
+		fields.add(offsetX);
+		fields.add(new JLabel("Offset Y"));
+		fields.add(offsetY);
+
+		final JPanel buttons = new JPanel(new GridLayout(1, 2, 8, 0));
+		final JButton applyButton = new JButton("Apply");
+		applyButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent e) {
+				settings.setTriggerDist(triggerDist.getValue());
+				settings.setCatchDist(catchDist.getValue());
+				settings.setRunDist(runDist.getValue());
+				settings.setOffsetX(offsetX.getValue());
+				settings.setOffsetY(offsetY.getValue());
+				settings.save();
+				dialog.dispose();
+			}
+		});
+		final JButton closeButton = new JButton("Close");
+		closeButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent e) {
+				dialog.dispose();
+			}
+		});
+		buttons.add(applyButton);
+		buttons.add(closeButton);
+
+		content.add(fields, BorderLayout.CENTER);
+		content.add(buttons, BorderLayout.SOUTH);
+		dialog.setContentPane(content);
+		return dialog;
+	}
+
+	private String resolveWindowTitle() {
+		String title = settings.getTitle();
+		return (title == null) ? "Kairo" : title;
+	}
+
+	private void applyWindowModeState(boolean windowed) {
+		controller.setWindowMode(windowed);
+		settings.load();
+		if (windowed) {
+			catbox.setTitle(resolveWindowTitle());
+			invisibleWindow.setVisible(false);
+			catbox.setVisible(true);
+		}
+		else {
+			catbox.setVisible(false);
+			invisibleWindow.setVisible(true);
+		}
+		controller.moveCatInBox();
 	}
 
 	/**
@@ -151,21 +245,7 @@ public class Kairo {
 
 	public void setWindowMode(boolean windowed)
 	{
-		controller.setWindowMode(windowed);
-		settings.load();
-		if (windowed) {
-			String title=settings.getTitle();
-			if ( title==null ) title="Kairo";
-			catbox.setTitle(title);
-			invisibleWindow.setVisible(false);
-
-			catbox.setVisible(true);
-		}
-		else {
-			catbox.setVisible(false);
-			invisibleWindow.setVisible(true);
-		}
-		controller.moveCatInBox();
+		applyWindowModeState(windowed);
 	}
 
 }

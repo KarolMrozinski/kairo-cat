@@ -56,6 +56,20 @@ public class KairoController {
 	private static final double pi = Math.PI;
 	private enum Position { OVER, UNDER, LEFT, RIGHT };
 
+	private static final int STATE_INIT = 0;
+	private static final int STATE_CHASING = 1;
+	private static final int STATE_IDLE = 2;
+	private static final int STATE_SURPRISED = 3;
+
+	private static final int FRAME_DEFAULT = 0;
+	private static final int FRAME_SIT = 31;
+	private static final int FRAME_LICK = 25;
+	private static final int FRAME_SCRATCH = 27;
+	private static final int FRAME_YAWN = 26;
+	private static final int FRAME_SLEEP = 29;
+	private static final int FRAME_SLEEPING = 30;
+	private static final int FRAME_SURPRISE = 32;
+
 	//
 	//Variables
 	private boolean windowMode;
@@ -220,14 +234,14 @@ public class KairoController {
 	private void animateCat(Position pos,double theta,double dist)
 	{
 		// There are four states.
-		// 0. Initialization (init<33)
-		// 1. Chasing the mouse (doMove=true)
-		// 2. sleeping or preparing to sleep
-		// 3. Surprised (was asleep, but the mouse moved) (no=32)
-		boolean doMove=false;
-		if ( state==0 ) {
+		// 0. Initialization (init < 33)
+		// 1. Chasing the mouse (doMove = true)
+		// 2. Sleeping or preparing to sleep
+		// 3. Surprised (was asleep, but the mouse moved) (no = 32)
+		boolean doMove = false;
+		if (state == STATE_INIT) {
 			if (init < 33) {
-				doMove=true;
+				doMove = true;
 				//tells the user the program is testing the images, and tells them
 				//when the test is done.
 				slp = settings.getLoadDelay();
@@ -237,224 +251,212 @@ public class KairoController {
 				init++;
 			}
 			else {
-				state=1;
+				state = STATE_CHASING;
 			}
 		}
-		else if ( state==1 ) {
-			doMove=true;
+		else if (state == STATE_CHASING) {
+			doMove = true;
 			slp = settings.getRunDelay(); // 5fps, 200ms
 			// note that ox,oy are screen-relative
-			double run=settings.getRunDist(); // 16
-			if ( run>dist ) {
-				run=dist;
+			double run = settings.getRunDist(); // 16
+			if (run > dist) {
+				run = dist;
 			}
 			ox = (int) (ox + Math.cos(theta) * run);
 			oy = (int) (oy - Math.sin(theta) * run);
 			dist = dist - run;
-			if ( dist < settings.getCatchDist() ) {
+			if (dist < settings.getCatchDist()) {
 				// mouse has been caught!
-				state=2;
+				state = STATE_IDLE;
 			}
-
-			/*
-			The following conditions determine what image should be shown.
-			Remember there are two images for each action. For example if the cat's
-			going right, display the cat with open legs and then with close legs,
-			open, and so on.
-			 */
-			if (theta >= -pi / 8 && theta <= pi / 8) //right
-			{
-				no = (no == 5) ? 6 : 5;
-			}
-			if (theta > pi / 8 && theta < 3 * pi / 8) //upper-right
-			{
-				no = (no == 3) ? 4 : 3;
-			}
-			if (theta >= 3 * pi / 8 && theta <= 5 * pi / 8) //up
-			{
-				no = (no == 1) ? 2 : 1;
-			}
-			if (theta > 5 * pi / 8 && theta < 7 * pi / 8) //upper-left
-			{
-				no = (no == 15) ? 16 : 15;
-			}
-			if (theta >= 7 * pi / 8 || theta <= -7 * pi / 8) //left
-			{
-				no = (no == 13) ? 14 : 13;
-			}
-			if (theta > -7 * pi / 8 && theta < -5 * pi / 8) //bottom-left
-			{
-				no = (no == 11) ? 12 : 11;
-			}
-			if (theta >= -5 * pi / 8 && theta <= -3 * pi / 8) //down
-			{
-				no = (no == 9) ? 10 : 9;
-			}
-			if (theta > -3 * pi / 8 && theta < -pi / 8) //bottom-right
-			{
-				no = (no == 7) ? 8 : 7;
-			}
+			selectRunningFrame(theta);
 			//We have moved toward the mouse, so set mouseMoved back to false
 			mouseMoved = false;
 		}
-		else {   //-if the mouse hasn't moved or the cat's over the mouse-
-			// state is 2 ; it stays at 2 until the mouse moves
-			// When it moves, go to state 3, show surprise, and then to state 1
-//			ox = x;
-//			oy = y;
-			switch (no) {
-				case 0: //<cat sit>
-					//If the mouse is outside the applet
-					if (pos != null) {
-						slp = settings.getSharpenDelay();
-						switch (pos) {
-							case OVER:
-								no = 17;
-								break;
-							case UNDER:
-								no = 21;
-								break;
-							case LEFT:
-								no = 23;
-								break;
-							case RIGHT:
-								no = 19;
-								break;
-							default:
-								slp = settings.getSitDelay();
-								no = 31;
-								break;
-						}
-						break;
-					}
-					slp = settings.getSitDelay();
-					no = 31;
-					break; //<31: cat lick>
-				//
-				case 17: //The mouse is outside, above applet
-					slp = settings.getSharpenDelay();
-					no = 18;	//show images 17 & 18, 6 times
-					ilc1++;
-					if (ilc1 == 6) {
-						no = 27;
-						ilc1 = 0;
-					}
-					break;
-				//
-				case 18:
-					slp = settings.getSharpenDelay();
-					no = 17;
-					break;
-				//
-				case 21: //The mouse is outside, under applet
-					slp = settings.getSharpenDelay();
-					no = 22;	//show images 21 & 22, 6 times
-					ilc1++;
-					if (ilc1 == 6) {
-						no = 27;
-						ilc1 = 0;
-					}
-					break;
-				//
-				case 22:
-					slp = settings.getSharpenDelay();
-					no = 21;
-					break;
-				//
-				case 23: //the mouse is outside, left
-					slp = settings.getSharpenDelay();
-					no = 24;	//show images 23 & 24, 6 times
-					ilc1++;
-					if (ilc1 == 6) {
-						no = 27;
-						ilc1 = 0;
-					}
-					break;
-				//
-				case 24:
-					slp = settings.getSharpenDelay();
-					no = 23;
-					break;
-				//
-				case 19: //The mouse is outside, right
-					slp = settings.getSharpenDelay();
-					no = 20;	//show images 19 & 20, 6 times
-					ilc1++;
-					if (ilc1 == 6) {
-						no = 27;
-						ilc1 = 0;
-					}
-					break;
-				//
-				case 20:
-					slp = settings.getSharpenDelay();
-					no = 19;
-					break;
-				//
-				case 31: //cat lick (6  times)
-					slp = settings.getSitDelay();
-					no = 25;
-					ilc1++;
-					if (ilc1 == 6) {
-						slp = settings.getScratchDelay();
-						no = 27;
-						ilc1 = 0;
-					}
-					break;
-				//
-				case 25:
-					slp = settings.getSitDelay();
-					no = 31;
-					break;
-				//
-				case 27:
-					slp = settings.getScratchDelay();
-					no = 28;
-					break; //cat scratch (27 & 28, 4 times)
-				case 28:
-					no = 27;
-					ilc2++;
-					if (ilc2 == 4) {
-						no = 26;
-						slp = settings.getYawnDelay();
-						ilc2 = 0;
-					}
-					break;
-				case 26:
-					no = 29;
-					slp = settings.getSleepDelay();
-					break; //cat yawn (26)
-				case 29:
-					no = 30;
-					slp = settings.getSleepDelay();
-					break; //cat sleep (29 & 30, forever)
-				case 30:
-					no = 29;
-					slp = settings.getSleepDelay();
-					break;
-				default:
-					no = 0;
-					break;
-			}
-			if (mouseMoved ) {
+		else {
+			advanceIdleAnimation(pos);
+			if (mouseMoved) {
 				// State 3. Go to state 1 and chase the mouse,
 				// after a suitable delay.
 				//re-initialize some variables
 				slp = settings.getSurpriseDelay();
-				no = 32;
+				no = FRAME_SURPRISE;
 				ilc1 = 0;
 				ilc2 = 0;
-				//mouseMoved = false;
-				state=1;
+				state = STATE_CHASING;
 			}
 		}
-		//draw the new image
-		if ( doMove )
-		{
+		if (doMove) {
 			moveCat();
 		}
 		freeLabel.setIcon(image[no]);
 		boxLabel.setIcon(image[no]);
+	}
+
+	private void selectRunningFrame(double theta) {
+		/*
+		The following conditions determine what image should be shown.
+		Remember there are two images for each action. For example if the cat's
+		going right, display the cat with open legs and then with close legs,
+		open, and so on.
+		 */
+		if (theta >= -pi / 8 && theta <= pi / 8) //right
+		{
+			no = (no == 5) ? 6 : 5;
+		}
+		if (theta > pi / 8 && theta < 3 * pi / 8) //upper-right
+		{
+			no = (no == 3) ? 4 : 3;
+		}
+		if (theta >= 3 * pi / 8 && theta <= 5 * pi / 8) //up
+		{
+			no = (no == 1) ? 2 : 1;
+		}
+		if (theta > 5 * pi / 8 && theta < 7 * pi / 8) //upper-left
+		{
+			no = (no == 15) ? 16 : 15;
+		}
+		if (theta >= 7 * pi / 8 || theta <= -7 * pi / 8) //left
+		{
+			no = (no == 13) ? 14 : 13;
+		}
+		if (theta > -7 * pi / 8 && theta < -5 * pi / 8) //bottom-left
+		{
+			no = (no == 11) ? 12 : 11;
+		}
+		if (theta >= -5 * pi / 8 && theta <= -3 * pi / 8) //down
+		{
+			no = (no == 9) ? 10 : 9;
+		}
+		if (theta > -3 * pi / 8 && theta < -pi / 8) //bottom-right
+		{
+			no = (no == 7) ? 8 : 7;
+		}
+	}
+
+	private void advanceIdleAnimation(Position pos) {
+		switch (no) {
+			case FRAME_DEFAULT:
+				if (pos != null) {
+					slp = settings.getSharpenDelay();
+					switch (pos) {
+						case OVER:
+							no = 17;
+							break;
+						case UNDER:
+							no = 21;
+							break;
+						case LEFT:
+							no = 23;
+							break;
+						case RIGHT:
+							no = 19;
+							break;
+						default:
+							slp = settings.getSitDelay();
+							no = FRAME_SIT;
+							break;
+					}
+					break;
+				}
+				slp = settings.getSitDelay();
+				no = FRAME_SIT;
+				break;
+			case 17:
+				slp = settings.getSharpenDelay();
+				no = 18;
+				ilc1++;
+				if (ilc1 == 6) {
+					no = FRAME_SCRATCH;
+					ilc1 = 0;
+				}
+				break;
+			case 18:
+				slp = settings.getSharpenDelay();
+				no = 17;
+				break;
+			case 21:
+				slp = settings.getSharpenDelay();
+				no = 22;
+				ilc1++;
+				if (ilc1 == 6) {
+					no = FRAME_SCRATCH;
+					ilc1 = 0;
+				}
+				break;
+			case 22:
+				slp = settings.getSharpenDelay();
+				no = 21;
+				break;
+			case 23:
+				slp = settings.getSharpenDelay();
+				no = 24;
+				ilc1++;
+				if (ilc1 == 6) {
+					no = FRAME_SCRATCH;
+					ilc1 = 0;
+				}
+				break;
+			case 24:
+				slp = settings.getSharpenDelay();
+				no = 23;
+				break;
+			case 19:
+				slp = settings.getSharpenDelay();
+				no = 20;
+				ilc1++;
+				if (ilc1 == 6) {
+					no = FRAME_SCRATCH;
+					ilc1 = 0;
+				}
+				break;
+			case 20:
+				slp = settings.getSharpenDelay();
+				no = 19;
+				break;
+			case FRAME_SIT:
+				slp = settings.getSitDelay();
+				no = FRAME_LICK;
+				ilc1++;
+				if (ilc1 == 6) {
+					slp = settings.getScratchDelay();
+					no = FRAME_SCRATCH;
+					ilc1 = 0;
+				}
+				break;
+			case FRAME_LICK:
+				slp = settings.getSitDelay();
+				no = FRAME_SIT;
+				break;
+			case FRAME_SCRATCH:
+				slp = settings.getScratchDelay();
+				no = 28;
+				break;
+			case 28:
+				no = FRAME_SCRATCH;
+				ilc2++;
+				if (ilc2 == 4) {
+					no = FRAME_YAWN;
+					slp = settings.getYawnDelay();
+					ilc2 = 0;
+				}
+				break;
+			case FRAME_YAWN:
+				no = FRAME_SLEEP;
+				slp = settings.getSleepDelay();
+				break;
+			case FRAME_SLEEP:
+				no = FRAME_SLEEPING;
+				slp = settings.getSleepDelay();
+				break;
+			case FRAME_SLEEPING:
+				no = FRAME_SLEEP;
+				slp = settings.getSleepDelay();
+				break;
+			default:
+				no = FRAME_DEFAULT;
+				break;
+		}
 	}
 
 	private void moveCat() {

@@ -9,9 +9,10 @@
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Path;
+import java.io.OutputStream;
 import java.util.Properties;
 
 /** Simple file-overridable resources */
@@ -128,6 +129,39 @@ public class Settings {
 			catch (NumberFormatException e) { }
 		}
 		return def;
+	}
+
+	public void setInt(String key, Integer value)
+	{
+		if (value == null) {
+			override.remove(key);
+			return;
+		}
+		override.put(key, value);
+	}
+
+	public void save()
+	{
+		if (homefile == null) return;
+		File parent = homefile.getParentFile();
+		if (parent != null && !parent.exists()) {
+			parent.mkdirs();
+		}
+		OutputStream out = null;
+		try {
+			out = new FileOutputStream(homefile);
+			override.store(out, "Kairo user settings");
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+		finally {
+			if (out != null) {
+				try {
+					out.close();
+				} catch (IOException e) { }
+			}
+		}
 	}
 
 }
