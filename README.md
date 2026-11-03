@@ -49,6 +49,8 @@ Its behavior is driven by a set of runtime parameters and the current activity m
 
 ## Run
 
+For a step-by-step local setup guide, see [SETUP.md](SETUP.md).
+
 ### With Maven
 
 ```bash
