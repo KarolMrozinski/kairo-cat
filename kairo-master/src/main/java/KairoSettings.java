@@ -41,6 +41,7 @@ public class KairoSettings {
 	private static final String FOCUS_MODE = "focusMode";
 	private static final String CONTEXT_MENU = "contextMenu";
 	private static final String CAT_SCALE_PERCENT = "catScalePercent";
+	private static final String FRAME_SCALE_MULTIPLIER = "frameScaleMultiplier";
 	private static final String MOTION_INTENSITY = "motionIntensity";
 	private static final String DESKTOP_MARGIN = "desktopMargin";
 	private static final String EDITOR_PADDING = "editorPadding";
@@ -70,6 +71,7 @@ public class KairoSettings {
 	private boolean focusMode;
 	private boolean contextMenu;
 	private int catScalePercent;
+	private int frameScaleMultiplier;
 	private int motionIntensity;
 	private int desktopMargin;
 	private int editorPadding;
@@ -118,6 +120,7 @@ public class KairoSettings {
 	public boolean isFocusModeEnabled() { return focusMode; }
 	public boolean isContextMenuEnabled() { return contextMenu; }
 	public int getCatScalePercent() { return catScalePercent; }
+	public int getFrameScaleMultiplier() { return frameScaleMultiplier; }
 	public int getMotionIntensity() { return motionIntensity; }
 	public int getDesktopMargin() { return desktopMargin; }
 	public int getEditorPadding() { return editorPadding; }
@@ -139,6 +142,7 @@ public class KairoSettings {
 	public void setFocusMode(boolean value) { focusMode = value; settings.setBoolean(FOCUS_MODE, value); }
 	public void setContextMenu(boolean value) { contextMenu = value; settings.setBoolean(CONTEXT_MENU, value); }
 	public void setCatScalePercent(int value) { catScalePercent = Math.max(100, value); settings.setInt(CAT_SCALE_PERCENT, catScalePercent); }
+	public void setFrameScaleMultiplier(int value) { frameScaleMultiplier = clampScaleMultiplier(value); settings.setInt(FRAME_SCALE_MULTIPLIER, frameScaleMultiplier); }
 	public void setMotionIntensity(int value) { motionIntensity = clampPercent(value); settings.setInt(MOTION_INTENSITY, motionIntensity); }
 	public void setDesktopMargin(int value) { desktopMargin = Math.max(0, value); settings.setInt(DESKTOP_MARGIN, desktopMargin); }
 	public void setEditorPadding(int value) { editorPadding = Math.max(0, value); settings.setInt(EDITOR_PADDING, editorPadding); }
@@ -167,6 +171,7 @@ public class KairoSettings {
 		focusMode = settings.getBoolean(FOCUS_MODE, false);
 		contextMenu = settings.getBoolean(CONTEXT_MENU, true);
 		catScalePercent = Math.max(100, settings.getInt(CAT_SCALE_PERCENT, 100));
+		frameScaleMultiplier = clampScaleMultiplier(settings.getInt(FRAME_SCALE_MULTIPLIER, 1));
 		motionIntensity = clampPercent(settings.getInt(MOTION_INTENSITY, 100));
 		desktopMargin = Math.max(0, settings.getInt(DESKTOP_MARGIN, 24));
 		editorPadding = Math.max(0, settings.getInt(EDITOR_PADDING, 40));
@@ -186,6 +191,10 @@ public class KairoSettings {
 
 	private int clampPercent(int value) {
 		return Math.max(50, Math.min(150, value));
+	}
+
+	private int clampScaleMultiplier(int value) {
+		return Math.max(1, Math.min(4, value));
 	}
 
 }

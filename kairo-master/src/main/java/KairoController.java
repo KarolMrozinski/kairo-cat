@@ -32,6 +32,7 @@ import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.AffineTransform;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -128,9 +129,11 @@ public class KairoController {
 	private boolean tailSwingEnabled;
 	private boolean smartBoundsEnabled;
 	private int scalePercent;
+	private int frameScaleMultiplier;
 	private int motionIntensity;
 	private int desktopMargin;
 	private int editorPadding;
+	private float deviceScaleFactor;
 	private ImageIcon image[];  //images
 	private Point windowOffset = new Point(-16, -30);
 	private Rectangle kairoBounds = new Rectangle();
@@ -169,9 +172,11 @@ public class KairoController {
 		this.tailSwingEnabled = this.settings.isTailSwingEnabled();
 		this.smartBoundsEnabled = this.settings.isSmartBoundsEnabled();
 		this.scalePercent = Math.max(100, this.settings.getCatScalePercent());
+		this.frameScaleMultiplier = this.settings.getFrameScaleMultiplier();
 		this.motionIntensity = this.settings.getMotionIntensity();
 		this.desktopMargin = this.settings.getDesktopMargin();
 		this.editorPadding = this.settings.getEditorPadding();
+		this.deviceScaleFactor = detectDeviceScaleFactor();
 
 		loadKitten();
 		w=image[1].getIconWidth();
@@ -199,22 +204,31 @@ public class KairoController {
 		// Note: The files start with 1. image[0] is a copy of 25.
 		// image[0] is a default, image[25] is part of the wash animation with image[31]
 		image = new ImageIcon[33];
+		float effectiveScale = Math.max(1.0f, this.deviceScaleFactor) * (this.scalePercent / 100.0f) * this.frameScaleMultiplier;
 		for (int i = 1; i <= 32; i++) {
 			ImageIcon source = new ImageIcon(Kairo.class.getResource("images/" + i + ".GIF"));
-			image[i] = scaleIcon(source, this.scalePercent);
+			image[i] = scaleIcon(source, effectiveScale);
 		}
 		image[0]=image[25];
-		this.windowOffset = new Point((int)Math.round(-16 * (this.scalePercent / 100.0)), (int)Math.round(-30 * (this.scalePercent / 100.0)));
+		this.windowOffset = new Point(
+				(int)Math.round(-16 * effectiveScale),
+				(int)Math.round(-30 * effectiveScale));
 		w=image[1].getIconWidth();
 		h=image[1].getIconHeight();
 	}
 
-	private ImageIcon scaleIcon(ImageIcon source, int percent) {
+	private ImageIcon scaleIcon(ImageIcon source, float scaleFactor) {
 		if (source == null || source.getImage() == null) return source;
-		int scaledWidth = Math.max(1, (int)Math.round(source.getIconWidth() * (percent / 100.0)));
-		int scaledHeight = Math.max(1, (int)Math.round(source.getIconHeight() * (percent / 100.0)));
+		int scaledWidth = Math.max(1, (int)Math.round(source.getIconWidth() * scaleFactor));
+		int scaledHeight = Math.max(1, (int)Math.round(source.getIconHeight() * scaleFactor));
 		Image scaledImage = source.getImage().getScaledInstance(scaledWidth, scaledHeight, Image.SCALE_SMOOTH);
 		return new ImageIcon(scaledImage);
+	}
+
+	private float detectDeviceScaleFactor() {
+		GraphicsConfiguration gc = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
+		AffineTransform tx = gc.getDefaultTransform();
+		return (float) Math.max(1.0, Math.max(tx.getScaleX(), tx.getScaleY()));
 	}
 
 	public int getWidth() { return w;}
@@ -407,7 +421,14 @@ public class KairoController {
 				lastTailMove = now;
 			}
 		}
-		//
+		if (!mouseMoved && state != BehaviorState.INIT) {
+			long idleDuration = System.currentTimeMillis() - lastInteractionTime;
+			if (idleDuration > getIdleThreshold()) {
+				timer.setDelay(Math.max(150, timer.getDelay() + 50));
+			} else {
+				timer.setDelay(50);
+			}
+		}
 		slp = Math.max(0, slp - timer.getDelay());
 		if (slp == 0)
 		{
@@ -779,6 +800,7 @@ public class KairoController {
 		this.idleReactionsEnabled = this.settings.isIdleReactionsEnabled();
 		this.tailSwingEnabled = this.settings.isTailSwingEnabled();
 		this.smartBoundsEnabled = this.settings.isSmartBoundsEnabled();
+		this.frameScaleMultiplier = this.settings.getFrameScaleMultiplier();
 		this.motionIntensity = this.settings.getMotionIntensity();
 		this.desktopMargin = this.settings.getDesktopMargin();
 		this.editorPadding = this.settings.getEditorPadding();

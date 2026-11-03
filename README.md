@@ -7,7 +7,7 @@
 
 <p align="center">
   <a href="#features"><img alt="Desktop companion" src="https://img.shields.io/badge/Type-Desktop%20Companion-8b5cf6" /></a>
-  <a href="#requirements"><img alt="Java" src="https://img.shields.io/badge/Java-8%2B-007396" /></a>
+  <a href="#requirements"><img alt="Java" src="https://img.shields.io/badge/Java-25-007396" /></a>
   <a href="#license"><img alt="License" src="https://img.shields.io/badge/License-Limited-orange" /></a>
 </p>
 
@@ -43,8 +43,9 @@ Its behavior is driven by a set of runtime parameters and the current activity m
 
 ## Requirements
 
-- Java JDK 8 or newer
-- Maven (recommended, optional for building the project)
+- Java JDK 25
+- Maven 3.9.16
+- IntelliJ IDEA 2026.2 (recommended for development and project work)
 
 ## Run
 
