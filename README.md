@@ -1,4 +1,4 @@
-# Kairo
+# Kairo Cat 
 
 Kairo is a lightweight desktop companion for Java Swing. It follows your cursor, settles into idle moods, and can be used as either a floating overlay or a framed desktop window.
 
