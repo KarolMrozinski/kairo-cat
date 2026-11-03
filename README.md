@@ -62,7 +62,7 @@ Key settings include:
 
 ## License
 
-This project is released under the Unlicense.
+This project is released under the LIMITED SOURCE-AVAILABLE & VIEW-ONLY LICENSE.
 
 See [LICENSE](LICENSE) for details.
 
