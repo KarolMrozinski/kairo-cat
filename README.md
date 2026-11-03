@@ -1,4 +1,4 @@
-# Kairo
+<h1 align="center">Kairo Cat</h1>
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/KarolMrozinski/kairo-cat/main/docs/Kairo_animated.gif" alt="Kairo desktop companion" width="520" />
