@@ -151,6 +151,9 @@ public class Kairo {
 			showSettingsDialog();
 			return;
 		}
+		if (evt.getButton() == MouseEvent.BUTTON1) {
+			controller.reactToClick();
+		}
 		if (settings.isClickToToggleEnabled()) {
 			setWindowMode(!controller.getWindowMode());
 		}
@@ -181,7 +184,7 @@ public class Kairo {
 		final JSlider runDist = new JSlider(1, 100, settings.getRunDist());
 		final JSlider offsetX = new JSlider(-100, 100, settings.getOffsetX());
 		final JSlider offsetY = new JSlider(-100, 100, settings.getOffsetY());
-		final javax.swing.JComboBox<String> activityMode = new javax.swing.JComboBox<String>(new String[] { "calm", "active", "playful" });
+		final javax.swing.JComboBox<String> activityMode = new javax.swing.JComboBox<String>(new String[] { "calm", "active", "playful", "curious", "sleepy", "mischievous" });
 		activityMode.setSelectedItem(settings.getActivityMode());
 		final javax.swing.JCheckBox followMouse = new javax.swing.JCheckBox("Follow mouse", settings.isFollowMouse());
 		final javax.swing.JCheckBox idleReactions = new javax.swing.JCheckBox("Idle reactions", settings.isIdleReactionsEnabled());

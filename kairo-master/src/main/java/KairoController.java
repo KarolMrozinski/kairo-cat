@@ -71,6 +71,26 @@ public class KairoController {
 		RIGHT
 	}
 
+	private enum PersonalityProfile {
+		CALM,
+		ACTIVE,
+		PLAYFUL,
+		CURIOUS,
+		SLEEPY,
+		MISCHIEVOUS;
+
+		public static PersonalityProfile fromMode(String mode) {
+			if (mode == null) return CALM;
+			String normalized = mode.trim().toLowerCase();
+			if ("active".equals(normalized)) return ACTIVE;
+			if ("playful".equals(normalized)) return PLAYFUL;
+			if ("curious".equals(normalized)) return CURIOUS;
+			if ("sleepy".equals(normalized)) return SLEEPY;
+			if ("mischievous".equals(normalized)) return MISCHIEVOUS;
+			return CALM;
+		}
+	}
+
 	private static final int FRAME_DEFAULT = 0;
 	private static final int FRAME_SIT = 31;
 	private static final int FRAME_LICK = 25;
@@ -98,6 +118,7 @@ public class KairoController {
 	private long lastMoodShift;
 	private long lastTailMove;
 	private String activityMode;
+	private PersonalityProfile personalityProfile;
 	private boolean followMouse;
 	private boolean idleReactionsEnabled;
 	private boolean tailSwingEnabled;
@@ -133,7 +154,8 @@ public class KairoController {
 		this.lastMoodShift = this.lastInteractionTime;
 		this.lastTailMove = this.lastInteractionTime;
 		this.isIdleAnimationPrepared = false;
-		this.activityMode = this.settings.getActivityMode();
+		this.activityMode = normalizeActivityMode(this.settings.getActivityMode());
+		this.personalityProfile = PersonalityProfile.fromMode(this.activityMode);
 		this.followMouse = this.settings.isFollowMouse();
 		this.idleReactionsEnabled = this.settings.isIdleReactionsEnabled();
 		this.tailSwingEnabled = this.settings.isTailSwingEnabled();
@@ -304,7 +326,7 @@ public class KairoController {
 				personalityPhase = (personalityPhase + 1) % 6;
 				lastMoodShift = now;
 			}
-			if ("playful".equals(activityMode) && tailSwingEnabled) {
+			if (("playful".equals(activityMode) || "mischievous".equals(activityMode) || "curious".equals(activityMode)) && tailSwingEnabled) {
 				lastTailMove = now;
 			}
 		}
@@ -344,11 +366,14 @@ public class KairoController {
 			slp = settings.getRunDelay(); // 5fps, 200ms
 			// note that ox,oy are screen-relative
 			double run = settings.getRunDist(); // 16
-			if ("calm".equals(activityMode)) {
+			if ("calm".equals(activityMode) || "sleepy".equals(activityMode)) {
 				run *= 0.8;
 			}
-			else if ("playful".equals(activityMode)) {
+			else if ("playful".equals(activityMode) || "mischievous".equals(activityMode)) {
 				run *= 1.35;
+			}
+			if ("curious".equals(activityMode)) {
+				run *= 1.1;
 			}
 			if (run > dist) {
 				run = dist;
@@ -361,12 +386,17 @@ public class KairoController {
 				state = BehaviorState.IDLE;
 			}
 			selectRunningFrame(theta);
-			if ("playful".equals(activityMode) && idleReactionsEnabled && (System.currentTimeMillis() - lastMoodShift) > 1200L) {
-				no = (no == FRAME_LICK) ? FRAME_SCRATCH : no;
+			if (idleReactionsEnabled && (System.currentTimeMillis() - lastMoodShift) > 1200L) {
+				if ("playful".equals(activityMode) || "mischievous".equals(activityMode)) {
+					no = (no == FRAME_LICK) ? FRAME_SCRATCH : no;
+				}
+				else if ("curious".equals(activityMode) && (personalityPhase % 2 == 0)) {
+					no = FRAME_SIT;
+				}
 			}
 			if (System.currentTimeMillis() - lastTailMove > 550L) {
 				lastTailMove = System.currentTimeMillis();
-				if (tailSwingEnabled && "playful".equals(activityMode) && (personalityPhase % 2 == 0)) {
+				if (tailSwingEnabled && ("playful".equals(activityMode) || "mischievous".equals(activityMode)) && (personalityPhase % 2 == 0)) {
 					no = (no == 5 || no == 6) ? 3 : no;
 				}
 			}
@@ -444,14 +474,8 @@ public class KairoController {
 			if (!idleReactionsEnabled) {
 				no = FRAME_DEFAULT;
 			}
-			else if ("playful".equals(activityMode)) {
-				no = FRAME_LICK;
-			}
-			else if ("active".equals(activityMode)) {
-				no = FRAME_SCRATCH;
-			}
 			else {
-				no = FRAME_YAWN;
+				no = selectIdleMoodFrame();
 			}
 		}
 		if (!isLongIdle) {
@@ -583,17 +607,26 @@ public class KairoController {
 	}
 
 	private long getIdleThreshold() {
+		if ("sleepy".equals(activityMode)) {
+			return 12000L;
+		}
 		if ("calm".equals(activityMode)) {
 			return 8000L;
 		}
 		if ("active".equals(activityMode)) {
 			return 3000L;
 		}
+		if ("curious".equals(activityMode)) {
+			return 5000L;
+		}
 		return 4000L;
 	}
 
 	private int selectIdleMoodFrame() {
 		int phase = (personalityPhase + idleMood) % 6;
+		if ("sleepy".equals(activityMode)) {
+			return (phase % 2 == 0) ? FRAME_YAWN : FRAME_SLEEP;
+		}
 		if ("calm".equals(activityMode)) {
 			if (phase == 0 || phase == 3) return FRAME_SCRATCH;
 			if (phase == 1 || phase == 4) return FRAME_YAWN;
@@ -603,6 +636,17 @@ public class KairoController {
 		if ("active".equals(activityMode)) {
 			if (phase == 0 || phase == 2) return FRAME_SCRATCH;
 			if (phase == 1) return FRAME_LICK;
+			if (phase == 3) return FRAME_SIT;
+			return FRAME_YAWN;
+		}
+		if ("curious".equals(activityMode)) {
+			if (phase == 0 || phase == 4) return FRAME_SIT;
+			if (phase == 1 || phase == 2) return FRAME_LICK;
+			return FRAME_SCRATCH;
+		}
+		if ("mischievous".equals(activityMode)) {
+			if (phase == 0 || phase == 2) return FRAME_LICK;
+			if (phase == 1 || phase == 4) return FRAME_SCRATCH;
 			if (phase == 3) return FRAME_SIT;
 			return FRAME_YAWN;
 		}
@@ -645,7 +689,8 @@ public class KairoController {
 	}
 
 	public void setActivityMode(String mode) {
-		this.activityMode = (mode == null) ? "calm" : mode;
+		this.activityMode = normalizeActivityMode(mode);
+		this.personalityProfile = PersonalityProfile.fromMode(this.activityMode);
 		this.idleMood = 0;
 		this.personalityPhase = 0;
 		this.lastMoodShift = System.currentTimeMillis();
@@ -656,7 +701,31 @@ public class KairoController {
 		this.idleReactionsEnabled = this.settings.isIdleReactionsEnabled();
 		this.tailSwingEnabled = this.settings.isTailSwingEnabled();
 		this.smartBoundsEnabled = this.settings.isSmartBoundsEnabled();
+		this.activityMode = normalizeActivityMode(this.settings.getActivityMode());
+		this.personalityProfile = PersonalityProfile.fromMode(this.activityMode);
 		this.lastInteractionTime = System.currentTimeMillis();
+	}
+
+	public void reactToClick() {
+		long now = System.currentTimeMillis();
+		this.lastInteractionTime = now;
+		this.lastMoodShift = now;
+		this.personalityPhase = (this.personalityPhase + 1) % 6;
+		this.idleMood = (this.idleMood + 1) % 6;
+		this.isIdleAnimationPrepared = false;
+		this.mouseMoved = true;
+		this.state = BehaviorState.SURPRISED;
+		this.no = FRAME_SURPRISE;
+		this.slp = settings.getSurpriseDelay();
+	}
+
+	private String normalizeActivityMode(String mode) {
+		String normalized = (mode == null) ? "calm" : mode.trim().toLowerCase();
+		if ("active".equals(normalized) || "playful".equals(normalized) || "curious".equals(normalized)
+				|| "sleepy".equals(normalized) || "mischievous".equals(normalized)) {
+			return normalized;
+		}
+		return "calm";
 	}
 
 	public void repositionCatForCurrentMode() {
