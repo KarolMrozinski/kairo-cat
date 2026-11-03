@@ -1,0 +1,22 @@
+# Example configuration for Kairo
+# Copy this file to:
+# Windows: C:\Users\<username>\kairo.properties
+# Unix/macOS: ~/kairo.properties
+
+windowTitle=Kairo Cat
+triggerDistance=64
+runDistancePerFrame=16
+offsetx=-2
+offsety=-3
+catchDistance=2
+
+maxFramerate=10
+runFramerate=8
+sitFramerate=3
+sharpenFramerate=3
+scratchFramerate=10
+loadFramerate=20
+
+sleepDelay=1200
+yawnDelay=1500
+surpriseDelay=1000
