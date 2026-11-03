@@ -90,7 +90,7 @@ public class Kairo {
 	 */
 	private void initComponents() {
 		String title=settings.getTitle();
-		if ( title==null ) title="Kairo";
+		if ( title==null ) title="Kairo Cat";
 		catbox=new JFrame(title);
 		catbox.setBackground(new Color(235, 238, 242, 255));
 		catbox.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);

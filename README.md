@@ -5,38 +5,38 @@
 </p>
 
 <p align="center">
-  <a href="#features"><img alt="Desktop Companion" src="https://img.shields.io/badge/Type-Desktop%20Companion-8b5cf6" /></a>
+  <a href="#features"><img alt="Desktop companion" src="https://img.shields.io/badge/Type-Desktop%20Companion-8b5cf6" /></a>
   <a href="#requirements"><img alt="Java" src="https://img.shields.io/badge/Java-8%2B-007396" /></a>
   <a href="#license"><img alt="License" src="https://img.shields.io/badge/License-Limited-orange" /></a>
 </p>
 
-Kairo is a polished desktop companion built in Java Swing. It lives on your screen as a calm, observant cat that follows your cursor, reacts to your presence, and settles into different idle moods depending on the atmosphere.
+Kairo Cat is a polished desktop companion built in Java Swing. It lives on your screen as a calm, observant cat that follows your cursor, reacts to your presence, and settles into distinct idle moods depending on your working rhythm.
 
-This project is designed to feel less like a demo and more like a thoughtful desktop experience: subtle motion, personal behavior, and a clean identity across code, UI, and documentation.
+The project is intentionally designed to feel thoughtful rather than noisy: subtle motion, personality-driven behavior, and a clean visual identity make it feel more like a premium desktop companion than a simple demo app.
 
-## Why Kairo ?
+## Why this project feels different
 
-Kairo is meant to be present without being intrusive. It reacts gently to movement, exhibits personality through idle behavior, and supports both floating-overlay and framed window modes.
+Kairo is built to be present without being intrusive. It keeps its own personality while staying respectful of your workspace, moving around the desktop in a calm, natural way instead of feeling artificial or distracting.
 
 <div align="center">
   <table>
     <tr>
       <td width="33%" valign="top">
-        <div style="background: linear-gradient(135deg, #1f2937, #111827); border-radius: 18px; padding: 18px; min-height: 170px; box-shadow: 0 10px 28px rgba(15,23,42,0.28); margin: 8px; color: white;">
+        <div style="background: linear-gradient(135deg, #111827, #1f2937); border-radius: 18px; padding: 18px; min-height: 170px; box-shadow: 0 14px 32px rgba(15,23,42,0.28); margin: 8px; color: white;">
           <h3>✨ Calm presence</h3>
-          <p>Subtle motion and gentle reactions make Kairo feel alive without distracting you from your work.</p>
+          <p>Subtle motion and gentle reactions keep Kairo alive without stealing focus from the work at hand.</p>
         </div>
       </td>
       <td width="33%" valign="top">
-        <div style="background: linear-gradient(135deg, #312e81, #1d4ed8); border-radius: 18px; padding: 18px; min-height: 170px; box-shadow: 0 10px 28px rgba(59,130,246,0.28); margin: 8px; color: white;">
+        <div style="background: linear-gradient(135deg, #312e81, #2563eb); border-radius: 18px; padding: 18px; min-height: 170px; box-shadow: 0 14px 32px rgba(37,99,235,0.26); margin: 8px; color: white;">
           <h3>🧠 Personality modes</h3>
-          <p>Switch between calm, active, playful, curious, sleepy, and mischievous patterns to shape Kairo’s mood.</p>
+          <p>Switch between calm, active, playful, curious, sleepy, and mischievous behavior to shape the cat’s mood.</p>
         </div>
       </td>
       <td width="33%" valign="top">
-        <div style="background: linear-gradient(135deg, #0f766e, #14b8a6); border-radius: 18px; padding: 18px; min-height: 170px; box-shadow: 0 10px 28px rgba(20,184,166,0.28); margin: 8px; color: white;">
-          <h3>🪟 Flexible layout</h3>
-          <p>Use Kairo as a floating overlay or as a compact desktop window depending on your setup.</p>
+        <div style="background: linear-gradient(135deg, #0f766e, #14b8a6); border-radius: 18px; padding: 18px; min-height: 170px; box-shadow: 0 14px 32px rgba(20,184,166,0.24); margin: 8px; color: white;">
+          <h3>🪟 Desktop-aware behavior</h3>
+          <p>Kairo supports floating and framed modes while respecting screen boundaries, active windows, and a respectful desktop rhythm.</p>
         </div>
       </td>
     </tr>
@@ -45,30 +45,30 @@ Kairo is meant to be present without being intrusive. It reacts gently to moveme
 
 ## Features
 
-- Follows the pointer across the desktop and multi-monitor setups
-- Supports both overlay and framed window presentation modes
-- Uses idle animation states like scratching, yawning, and resting
-- Ships with personality-driven activity modes and mood shifts
-- Includes smarter screen-bound handling and safer repositioning logic
-- Configurable via `kairo.properties` and the in-app settings dialog
-- Lightweight, dependency-minimal Swing implementation
+- Follows the pointer across the desktop in a smooth, characterful way
+- Supports both floating overlay and framed window modes
+- Uses idle animations such as scratching, yawning, resting, and attention shifts
+- Includes personality-driven activity profiles and mood transitions
+- Adjusts behavior with safer bounds, smart margins, and responsive desktop logic
+- Configurable through the in-app settings dialog and `kairo.properties`
+- Built as a lightweight Java Swing project with minimal external dependencies
 
 ## Project structure
 
-- `src/main/java/` — application logic, controller behavior, and UI bootstrap
+- `src/main/java/` — application logic, controller behavior, window logic, and UI bootstrap
 - `src/main/resources/` — runtime assets and default settings
-- `docs/` — product docs and supporting project content
+- `docs/` — supporting visuals and project documentation
 - `pom.xml` — Maven project definition
-- `LICENSE` — project licensing terms
+- `LICENSE` — licensing and project posture
 
 ## Requirements
 
 - Java JDK 8 or newer
-- Maven (optional, recommended for packaging)
+- Maven (recommended, optional for simple builds)
 
 ## Run
 
-### Using Maven
+### With Maven
 
 ```bash
 mvn package
@@ -84,7 +84,7 @@ java -cp out Kairo
 
 ## Configuration
 
-The runtime behavior is driven by `src/main/resources/kairo.properties`, with additional runtime tuning available in the in-app settings dialog.
+The runtime behavior is driven by `src/main/resources/kairo.properties`, with additional tuning available in the in-app settings panel.
 
 Key values include:
 
@@ -97,12 +97,18 @@ Key values include:
 
 ## Design direction
 
-Kairo is intentionally built as a desktop companion rather than a decorative toy. The design priorities are:
+Kairo is intentionally built as a desktop companion rather than a decorative toy. The product goal is simple:
 
 - calm presence over noisy motion
 - personality over raw animation speed
 - clarity over legacy complexity
-- a consistent visual identity across code, UI, and documentation
+- a consistent visual identity across code, UI, and presentation
+
+This keeps the experience fun, intentional, and polished without turning the project into something generic or over-engineered.
+
+## Project status
+
+This project is in a mature polish phase: the main behavior is stable, the personality system is in place, and the interface is intentionally shaped as a polished desktop experience rather than a prototype.
 
 ## License
 
