@@ -2,24 +2,66 @@ LIMITED SOURCE-AVAILABLE & VIEW-ONLY LICENSE
 
 Copyright (C) 2026 Karol Mrozinski. All rights reserved.
 
-This license applies to the Kairo software project and all related source files, documentation, assets, and configuration files associated with it (the "Software").
+This license applies to the Kairo software project and all related source files,
+documentation, assets, and configuration files associated with it (the "Software").
 
 1. VIEW-ONLY ACCESS
-Permission is hereby granted to any person obtaining a copy of the Software to inspect, read, and review the source code solely for evaluation, educational, research, or code-review purposes.
+
+Permission is hereby granted to any person obtaining a copy of the Software to
+inspect, read, and review the source code solely for evaluation, educational,
+research, or code-review purposes.
 
 2. ABSOLUTE EXCLUSION OF EXECUTION, DEPLOYMENT, MODIFICATION AND LIABILITY
-The Author provides the Software strictly as source code for inspection and academic review. No permission is granted to run, execute, deploy, compile, modify, adapt, distribute, sublicense, or incorporate the Software into any system, product, service, infrastructure, or operational environment.
-The Author assumes zero liability, responsibility, or legal obligations for any use, misuse, execution, deployment, or consequences arising from the Software, including any direct, indirect, incidental, special, or consequential damages.
+
+The Author provides the Software strictly as source code for inspection and
+academic review.
+
+No permission is granted to:
+- run,
+- execute,
+- deploy,
+- compile,
+- modify,
+- adapt,
+- distribute,
+- sublicense,
+- or incorporate the Software into any system, product, service,
+  infrastructure, or operational environment.
+
+The Author assumes zero liability, responsibility, or legal obligations for any
+use, misuse, execution, deployment, or consequences arising from the Software,
+including any direct, indirect, incidental, special, or consequential damages.
 
 3. STRICT PROHIBITION OF COMMERCIAL, MILITARY AND CRITICAL USE
-Any commercial use, integration into proprietary products, for-profit services, critical infrastructure, defense systems, military projects, or operational environments is strictly prohibited. The Author does not certify, endorse, or warrant the suitability of the Software for any purpose, regulatory requirement, or high-risk environment.
+
+Any commercial use, integration into proprietary products, for-profit
+services, critical infrastructure, defense systems, military projects, or
+operational environments is strictly prohibited.
+
+The Author does not certify, endorse, or warrant the suitability of the
+Software for any purpose, regulatory requirement, or high-risk environment.
 
 4. COMPLIANCE, EXPORT CONTROL AND TRADEMARKS
-The end-user or reviewer assumes absolute responsibility for complying with all applicable local, national, and international laws, including export control, dual-use, sanctions, and cryptographic compliance requirements. The name "Kairo" and associated branding remain the exclusive property of the Author and may not be used without prior written consent.
+
+The end-user or reviewer assumes absolute responsibility for complying with all
+applicable local, national, and international laws, including export control,
+dual-use, sanctions, and cryptographic compliance requirements.
+
+The name "Kairo" and associated branding remain the exclusive property of the
+Author and may not be used without prior written consent.
 
 5. NO WARRANTY
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, ACCURACY, RELIABILITY, AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES, LOSSES, OR OTHER LIABILITY (WHETHER IN CONTRACT, TORT, OR OTHERWISE), ARISING FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE, EXECUTION, OR MISUSE THEREOF.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE, ACCURACY, RELIABILITY, AND NONINFRINGEMENT.
+
+IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES, LOSSES, OR OTHER
+LIABILITY (WHETHER IN CONTRACT, TORT, OR OTHERWISE), ARISING FROM, OUT OF, OR
+IN CONNECTION WITH THE SOFTWARE OR THE USE, EXECUTION, OR MISUSE THEREOF.
 
 6. NO IMPLIED LICENSE
-No other rights are granted by this License. All rights not expressly granted are reserved by the Author.
+
+No other rights are granted by this License. All rights not expressly granted
+are reserved by the Author.
 
