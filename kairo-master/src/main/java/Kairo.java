@@ -151,7 +151,9 @@ public class Kairo {
 			showSettingsDialog();
 			return;
 		}
-		setWindowMode(!controller.getWindowMode());
+		if (settings.isClickToToggleEnabled()) {
+			setWindowMode(!controller.getWindowMode());
+		}
 	}
 
 	private void showSettingsDialog() {
@@ -181,6 +183,12 @@ public class Kairo {
 		final JSlider offsetY = new JSlider(-100, 100, settings.getOffsetY());
 		final javax.swing.JComboBox<String> activityMode = new javax.swing.JComboBox<String>(new String[] { "calm", "active", "playful" });
 		activityMode.setSelectedItem(settings.getActivityMode());
+		final javax.swing.JCheckBox followMouse = new javax.swing.JCheckBox("Follow mouse", settings.isFollowMouse());
+		final javax.swing.JCheckBox idleReactions = new javax.swing.JCheckBox("Idle reactions", settings.isIdleReactionsEnabled());
+		final javax.swing.JCheckBox tailSwing = new javax.swing.JCheckBox("Tail swing", settings.isTailSwingEnabled());
+		final javax.swing.JCheckBox clickToToggle = new javax.swing.JCheckBox("Click-to-toggle", settings.isClickToToggleEnabled());
+		final javax.swing.JCheckBox smartBounds = new javax.swing.JCheckBox("Smart monitor bounds", settings.isSmartBoundsEnabled());
+		final javax.swing.JCheckBox transparency = new javax.swing.JCheckBox("Window transparency", settings.isWindowTransparencyEnabled());
 
 		addLabeledControl(fields, "Trigger distance", triggerDist);
 		addLabeledControl(fields, "Catch distance", catchDist);
@@ -188,6 +196,12 @@ public class Kairo {
 		addLabeledControl(fields, "Offset X", offsetX);
 		addLabeledControl(fields, "Offset Y", offsetY);
 		addLabeledControl(fields, "Activity mode", activityMode);
+		fields.add(followMouse);
+		fields.add(idleReactions);
+		fields.add(tailSwing);
+		fields.add(clickToToggle);
+		fields.add(smartBounds);
+		fields.add(transparency);
 
 		final JPanel buttons = new JPanel(new GridLayout(1, 3, 8, 0));
 		final JButton centerButton = new JButton("Center Kairo");
@@ -205,8 +219,15 @@ public class Kairo {
 				settings.setOffsetX(offsetX.getValue());
 				settings.setOffsetY(offsetY.getValue());
 				settings.setActivityMode((String) activityMode.getSelectedItem());
+				settings.setFollowMouse(followMouse.isSelected());
+				settings.setIdleReactions(idleReactions.isSelected());
+				settings.setTailSwing(tailSwing.isSelected());
+				settings.setClickToToggle(clickToToggle.isSelected());
+				settings.setSmartBounds(smartBounds.isSelected());
+				settings.setWindowTransparency(transparency.isSelected());
 				settings.save();
 				controller.setActivityMode(settings.getActivityMode());
+				controller.setBehaviorOptions();
 				dialog.dispose();
 			}
 		});

@@ -98,6 +98,10 @@ public class KairoController {
 	private long lastMoodShift;
 	private long lastTailMove;
 	private String activityMode;
+	private boolean followMouse;
+	private boolean idleReactionsEnabled;
+	private boolean tailSwingEnabled;
+	private boolean smartBoundsEnabled;
 	private ImageIcon image[];  //images
 	private Point windowOffset = new Point(-16, -30);
 	private Rectangle kairoBounds = new Rectangle();
@@ -130,6 +134,10 @@ public class KairoController {
 		this.lastTailMove = this.lastInteractionTime;
 		this.isIdleAnimationPrepared = false;
 		this.activityMode = this.settings.getActivityMode();
+		this.followMouse = this.settings.isFollowMouse();
+		this.idleReactionsEnabled = this.settings.isIdleReactionsEnabled();
+		this.tailSwingEnabled = this.settings.isTailSwingEnabled();
+		this.smartBoundsEnabled = this.settings.isSmartBoundsEnabled();
 
 		loadKitten();
 		w=image[1].getIconWidth();
@@ -187,10 +195,18 @@ public class KairoController {
 		if (usableBounds == null) return;
 
 		kairoBounds = usableBounds;
-		kairoBounds.x += w / 2;
-		kairoBounds.y += h;
-		kairoBounds.width = Math.max(0, kairoBounds.width - w);
-		kairoBounds.height = Math.max(0, kairoBounds.height - h);
+		if (smartBoundsEnabled) {
+			kairoBounds.x += w / 2;
+			kairoBounds.y += h;
+			kairoBounds.width = Math.max(0, kairoBounds.width - w);
+			kairoBounds.height = Math.max(0, kairoBounds.height - h);
+		}
+		else {
+			kairoBounds.x += 8;
+			kairoBounds.y += 8;
+			kairoBounds.width = Math.max(0, kairoBounds.width - 16);
+			kairoBounds.height = Math.max(0, kairoBounds.height - 16);
+		}
 	}
 
 	private Rectangle getDesktopBounds(PointerInfo pointerInfo) {
@@ -288,7 +304,7 @@ public class KairoController {
 				personalityPhase = (personalityPhase + 1) % 6;
 				lastMoodShift = now;
 			}
-			if ("playful".equals(activityMode)) {
+			if ("playful".equals(activityMode) && tailSwingEnabled) {
 				lastTailMove = now;
 			}
 		}
@@ -345,12 +361,12 @@ public class KairoController {
 				state = BehaviorState.IDLE;
 			}
 			selectRunningFrame(theta);
-			if ("playful".equals(activityMode) && (System.currentTimeMillis() - lastMoodShift) > 1200L) {
+			if ("playful".equals(activityMode) && idleReactionsEnabled && (System.currentTimeMillis() - lastMoodShift) > 1200L) {
 				no = (no == FRAME_LICK) ? FRAME_SCRATCH : no;
 			}
 			if (System.currentTimeMillis() - lastTailMove > 550L) {
 				lastTailMove = System.currentTimeMillis();
-				if ("playful".equals(activityMode) && (personalityPhase % 2 == 0)) {
+				if (tailSwingEnabled && "playful".equals(activityMode) && (personalityPhase % 2 == 0)) {
 					no = (no == 5 || no == 6) ? 3 : no;
 				}
 			}
@@ -425,7 +441,10 @@ public class KairoController {
 			idleMood = (idleMood + 1) % 6;
 			lastMoodShift = System.currentTimeMillis();
 			isIdleAnimationPrepared = true;
-			if ("playful".equals(activityMode)) {
+			if (!idleReactionsEnabled) {
+				no = FRAME_DEFAULT;
+			}
+			else if ("playful".equals(activityMode)) {
 				no = FRAME_LICK;
 			}
 			else if ("active".equals(activityMode)) {
@@ -603,6 +622,13 @@ public class KairoController {
 		else {
 			int x = clamp(ox, kairoBounds.x, kairoBounds.x + kairoBounds.width) + windowOffset.x;
 			int y = clamp(oy, kairoBounds.y, kairoBounds.y + kairoBounds.height) + windowOffset.y;
+			if (followMouse) {
+				Point mouse = MouseInfo.getPointerInfo() != null ? MouseInfo.getPointerInfo().getLocation() : null;
+				if (mouse != null) {
+					x = mouse.x + settings.getOffsetX();
+					y = mouse.y + settings.getOffsetY();
+				}
+			}
 			invisibleWindow.setLocation(x, y);
 		}
 	}
@@ -623,6 +649,14 @@ public class KairoController {
 		this.idleMood = 0;
 		this.personalityPhase = 0;
 		this.lastMoodShift = System.currentTimeMillis();
+	}
+
+	public void setBehaviorOptions() {
+		this.followMouse = this.settings.isFollowMouse();
+		this.idleReactionsEnabled = this.settings.isIdleReactionsEnabled();
+		this.tailSwingEnabled = this.settings.isTailSwingEnabled();
+		this.smartBoundsEnabled = this.settings.isSmartBoundsEnabled();
+		this.lastInteractionTime = System.currentTimeMillis();
 	}
 
 	public void repositionCatForCurrentMode() {

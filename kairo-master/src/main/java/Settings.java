@@ -98,6 +98,35 @@ public class Settings {
 		return def;
 	}
 
+	public Boolean getBoolean(String key)
+	{
+		return getBoolean(key,null);
+	}
+
+	public Boolean getBoolean(String key, Boolean def)
+	{
+		Object ret=null;
+		ret=override.get(key);
+		if ( ret!=null )
+		{
+			if ( ret instanceof Boolean ) return (Boolean) ret;
+			try {
+				return Boolean.valueOf(ret.toString());
+			}
+			catch (Exception e) { }
+		}
+		ret=builtin.get(key);
+		if ( ret!=null )
+		{
+			if ( ret instanceof Boolean ) return (Boolean) ret;
+			try {
+				return Boolean.valueOf(ret.toString());
+			}
+			catch (Exception e) { }
+		}
+		return def;
+	}
+
 	public Integer getInt(String key)
 	{
 		return getInt(key,null);
@@ -141,6 +170,15 @@ public class Settings {
 	}
 
 	public void setString(String key, String value)
+	{
+		if (value == null) {
+			override.remove(key);
+			return;
+		}
+		override.put(key, value);
+	}
+
+	public void setBoolean(String key, Boolean value)
 	{
 		if (value == null) {
 			override.remove(key);
